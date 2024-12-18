@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+.welcome-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+    padding: 2rem;
+    font-family: 'Montserrat', sans-serif;
+}
+.welcome-main h1 {
+  font-size: 4em;
+  margin-bottom: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}
+
+.welcome-main p {
+  font-size: 2rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.welcome-text {
+  padding-top: 10rem; /* Use padding-top instead of margin-top */
+  margin-bottom: 10rem; /* Adjust as needed */
+}
+
+.welcome-image-full {
+  margin: 20px 0; /* Adjust as needed */
+}
+
+.welcome-image-full img {
+  width: 100%; /* Adjust as needed */
+  height: auto;
+}
+
+.welcome-images-side-by-side {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* Adjust the gap as needed */
+  margin-top: 20px; /* Add margin-top to space out from the text */
+}
+
+.welcome-images-side-by-side img {
+  width: 45%; /* Adjust as needed */
+  height: auto;
+}

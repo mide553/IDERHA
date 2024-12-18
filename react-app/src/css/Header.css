@@ -39,3 +39,8 @@
 .nav button:hover {
     text-decoration: underline;
 }
+
+.logo-link {
+    text-decoration: none;
+    color: inherit; /* Optional: to inherit the color from the parent element */
+}
