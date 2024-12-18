@@ -11,14 +11,12 @@ main {
   box-sizing: border-box;
 }
 
-/* Set a default font and background color */
 body {
   font-family: Arial, sans-serif;
   background-color: white;
   color: #333;
 }
 
-/* Style the header */
 header {
   background-color: #4CAF50;
   color: white;
@@ -26,7 +24,6 @@ header {
   text-align: center;
 }
 
-/* Style the footer */
 footer {
   background-color: #4CAF50;
   color: white;
@@ -37,15 +34,12 @@ footer {
   bottom: 0;
 }
 
-/* Style the main content area */
 main {
   padding: 2rem;
   margin-top: 1rem;
   margin-bottom: 3rem;
-  /* To avoid overlap with the fixed footer */
 }
 
-/* Add some basic styles for headings and paragraphs */
 h1,
 h2 {
   margin-bottom: 1rem;
