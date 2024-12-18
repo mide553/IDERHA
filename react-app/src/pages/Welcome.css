@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-.home-main {
+.welcome-main {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,14 +11,14 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-.home-main h1 {
+.welcome-main h1 {
     font-size: 4em;
     margin-bottom: 1rem;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
 }
 
-.home-main p {
+.welcome-main p {
     font-size: 2rem;
     font-family: 'Montserrat', sans-serif;
 }

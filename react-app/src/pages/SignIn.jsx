@@ -1,14 +1,28 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SignIn.css';
 
-const SignIn = () => {
+const SignIn = ({ setIsSignedIn }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    const templateAccount = {
+        email: 'test@test.com',
+        password: '12345678'
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Email:', email);
-        console.log('Password:', password);
+        if (email === templateAccount.email && password === templateAccount.password) {
+            console.log('Sign In Successful');
+            setError('');
+            setIsSignedIn(true); // Set sign-in status to true
+            navigate('/welcome'); // Redirect to the welcome page
+        } else {
+            setError('Invalid email or password');
+        }
     };
 
     return (
@@ -33,6 +47,7 @@ const SignIn = () => {
                         required
                     />
                 </div>
+                {error && <p className="error">{error}</p>}
                 <button type="submit">Sign In</button>
             </form>
         </div>

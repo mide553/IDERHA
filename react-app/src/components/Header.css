@@ -7,7 +7,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 1.5rem;
     border-bottom: 2px solid #D9D9D9;
     font-family: 'Montserrat', sans-serif;
 }
@@ -23,13 +23,19 @@
     gap: 1rem;
 }
 
-.nav a {
+.nav a,
+.nav button {
     color: black;
     text-decoration: none;
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
 }
 
-.nav a:hover {
+.nav a:hover,
+.nav button:hover {
     text-decoration: underline;
 }
