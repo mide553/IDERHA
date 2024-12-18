@@ -1,0 +1,13 @@
+import React from 'react';
+import './Home.css';
+
+const Home = () => {
+    return (
+        <div className="home-main">
+            <h1>IDERHA</h1>
+            <p>Revolutionizing eHealth Data Spaces with secure, user-friendly solutions for data processing, analysis, and sharing.</p>
+        </div>
+    );
+};
+
+export default Home;

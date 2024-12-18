@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+/* Main content styles */
+.home-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+    padding: 2rem;
+    background-color: white;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.home-main h1 {
+    font-size: 4em;
+    margin-bottom: 1rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.home-main p {
+    font-size: 1.2rem;
+    font-family: 'Montserrat', sans-serif;
+}

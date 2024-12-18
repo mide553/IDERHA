@@ -1,0 +1,56 @@
+/* Reset some default browser styles */
+body,
+h1,
+h2,
+p,
+header,
+footer,
+main {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set a default font and background color */
+body {
+  font-family: Arial, sans-serif;
+  background-color: white;
+  color: #333;
+}
+
+/* Style the header */
+header {
+  background-color: #4CAF50;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Style the footer */
+footer {
+  background-color: #4CAF50;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+
+/* Style the main content area */
+main {
+  padding: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+  /* To avoid overlap with the fixed footer */
+}
+
+/* Add some basic styles for headings and paragraphs */
+h1,
+h2 {
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
