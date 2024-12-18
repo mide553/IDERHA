@@ -10,7 +10,7 @@
   padding: 3rem;
   border-top: 2px solid #D9D9D9;
   font-family: 'Montserrat', sans-serif;
-  position: relative; /* Ensure the footer is positioned normally */
+  position: relative;
 }
 
 .footer-container {

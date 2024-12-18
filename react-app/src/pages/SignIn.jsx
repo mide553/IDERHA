@@ -19,7 +19,7 @@ const SignIn = ({ setIsSignedIn }) => {
             console.log('Sign In Successful');
             setError('');
             setIsSignedIn(true); // Set sign-in status to true
-            navigate('/welcome'); // Redirect to the welcome page
+            navigate('/welcome');
         } else {
             setError('Invalid email or password');
         }

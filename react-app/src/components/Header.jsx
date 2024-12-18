@@ -20,7 +20,7 @@ const Header = ({ isSignedIn, setIsSignedIn }) => {
                     <Link to="/signin">Sign In</Link>
                 ) : (
                     <>
-                        <Link to="/">Home</Link>
+                        <Link to="/welcome">Home</Link>
                         <button onClick={handleSignOut} className="nav-button">Sign Out</button>
                     </>
                 )}

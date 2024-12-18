@@ -30,17 +30,20 @@
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
     background: none;
-    border: none;
+    border: 2px solid black;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     cursor: pointer;
-    padding: 0;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .nav a:hover,
 .nav button:hover {
-    text-decoration: underline;
+    background-color: black;
+    color: white;
 }
 
 .logo-link {
     text-decoration: none;
-    color: inherit; /* Optional: to inherit the color from the parent element */
+    color: inherit;
 }
