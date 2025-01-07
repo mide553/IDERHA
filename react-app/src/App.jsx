@@ -5,6 +5,10 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import Welcome from './pages/Welcome';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import AboutUs from './pages/AboutUs';
+import Analytics from './pages/Analytics';
 import './css/Main.css';
 
 const App = () => {
@@ -19,6 +23,10 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/signin" element={<SignIn setIsSignedIn={setIsSignedIn} />} />
             <Route path="/welcome" element={<Welcome />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/analytics" element={<Analytics />} />
           </Routes>
         </main>
         <Footer />

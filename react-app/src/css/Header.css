@@ -43,6 +43,16 @@
     color: white;
 }
 
+.nav-button {
+    background-color: black !important;
+    color: white !important;
+}
+
+.nav-button:hover {
+    background-color: white !important;
+    color: black !important;
+}
+
 .logo-link {
     text-decoration: none;
     color: inherit;
