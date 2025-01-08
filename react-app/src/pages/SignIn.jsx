@@ -18,7 +18,7 @@ const SignIn = ({ setIsSignedIn }) => {
         if (email === templateAccount.email && password === templateAccount.password) {
             console.log('Sign In Successful');
             setError('');
-            setIsSignedIn(true); // Set sign-in status to true
+            setIsSignedIn(true);
             navigate('/welcome');
         } else {
             setError('Invalid email or password');
