@@ -1,0 +1,24 @@
+## 1. Start pgAdmin 4 Database ##
+## database = IDERHA
+## database port = 5432
+## username = postgres
+## password = postgres
+
+
+## 2. Start Backend Server ##
+
+cd backend
+## Check maven version if installed
+mvn -v
+mvn clean install
+mvn spring-boot:run
+
+
+
+## 3. Start Frontend Server ##
+
+cd react-app
+## Check node.js and Node Package Manager if installed
+node -v
+npm -v
+npm run dev

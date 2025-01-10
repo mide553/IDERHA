@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+.signin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+}
+
+.signin-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.signin-container h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 4em;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.signin-form div {
+    margin-bottom: 15px;
+}
+
+.signin-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.signin-form input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.signin-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.signin-form button:hover {
+    background-color: #45a049;
+}
+
+.error {
+    color: red;
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 15px;
+}
