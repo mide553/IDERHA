@@ -14,16 +14,6 @@ public class DatabaseController {
     @Autowired
     private DatabaseService databaseService;
 
-    @GetMapping("/tables")
-    public List<Map<String, Object>> getTables() {
-        return databaseService.getTables();
-    }
-
-    @GetMapping("/pgdata")
-    public List<Map<String, Object>> getInitialData() {
-        return databaseService.getInitialData();
-    }
-
     @PostMapping("/pg-query")
     public List<Map<String, Object>> executeQuery(@RequestBody Map<String, String> request) {
         String query = request.get("query");

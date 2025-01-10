@@ -1,34 +1,24 @@
-
-## 1. Start pgAdmin 4 Database called "IDERHA" ##
+## 1. Start pgAdmin 4 Database ##
+## database = IDERHA
+## database port = 5432
+## username = postgres
+## password = postgres
 
 
 ## 2. Start Backend Server ##
 
 cd backend
-## check maven version if installed
-## mvn -v
+## Check maven version if installed
+mvn -v
 mvn clean install
 mvn spring-boot:run
+
 
 
 ## 3. Start Frontend Server ##
 
 cd react-app
+## Check node.js and Node Package Manager if installed
+node -v
+npm -v
 npm run dev
-
-
-
-
-
-
-## DEBUGGING ##
-
-## If Analytics page is not loading data, there could be problems with the data in database
-## Truncate tables with query: truncate_all.sql
-## Then insert sample data with query: sample_data.sql
-
-## old backend using node.js ##
-##
-## cd backend
-## npm install express cors pg
-## node server.js

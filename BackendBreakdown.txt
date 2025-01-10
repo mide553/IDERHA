@@ -1,0 +1,56 @@
+1. application.properties
+    
+    -Configuration file for Spring Boot
+    -Defines:
+        > Server port (8080)
+        > PostgreSQL database connection details
+        > Hibernate settings
+
+
+2. InnoIderhaApplication.java
+
+    -Main entry point for Spring Boot application
+    -Contains main() method to start the application
+
+
+3. SecurityConfig.java
+
+    -Configures Spring Security
+    -Defines security rules:
+        > Disables CSRF protection
+        > Makes /api/** endpoints public
+        > Requires authentication for other routes
+        > Enables basic HTTP authentication
+
+
+4. WebConfig.java
+
+    -Configures CORS (Cross-Origin Resource Sharing)
+    -Browser security feature
+    -Prevents frontend (localhost:3000) from accessing backend (localhost:8080) directly
+    -Required because frontend and backend are on different ports/origins
+    -Allows requests from frontend (localhost:3000) to:
+        > Access /api/** endpoints
+        > Use GET, POST, PUT, DELETE, OPTIONS methods
+        > Include any headers
+        > Send credentials
+
+
+5. DatabaseService.java
+    
+    -Service layer for database operations
+    -Contains methods:
+        > executeQuery(): Runs custom SQL queries
+
+
+6. DatabaseController.java
+
+    -REST API controller
+    -Exposes endpoints:
+        > POST /api/pg-query: Execute custom queries
+    -Maps HTTP requests to service methods
+
+
+7. Data Flow:
+
+Client Request → Controller → Service → Database → Service → Controller → Client Response
