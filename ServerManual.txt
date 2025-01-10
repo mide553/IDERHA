@@ -22,3 +22,8 @@ cd react-app
 node -v
 npm -v
 npm run dev
+
+## Frontend build fix
+## cd react-app
+## npm install
+## npm install -g vite
