@@ -27,7 +27,7 @@ const SignIn = ({ setIsSignedIn }) => {
 
     return (
         <div className="signin-container">
-            <h2>Login to IDERHA</h2>
+            <h2>Login to eHealth Insights</h2>
             <form className="signin-form" onSubmit={handleSubmit}>
                 <div>
                     <label>Email:</label>

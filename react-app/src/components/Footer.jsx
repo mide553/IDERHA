@@ -16,7 +16,7 @@ const Footer = () => {
                     <p>Phone: +43 123 456 789</p>
                 </div>
                 <div className="footer-copy">
-                    <p>&copy; 2024 IDERHA Team 23</p>
+                    <p>&copy; 2024 INNO Team 23</p>
                 </div>
             </div>
         </footer>
