@@ -263,7 +263,7 @@ const Analytics = () => {
                     {activeTab === 'basic' && (
                         <>
                             <button onClick={() => runQuery(queries.basic.showTables, 'Database Tables')}>
-                                Show Tables #error-handeling-purpose
+                                All Tables
                             </button>
                             <button onClick={() => runQuery(queries.basic.allPersons, 'Total Persons')}>
                                 Total Persons

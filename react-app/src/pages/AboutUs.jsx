@@ -24,7 +24,6 @@ const AboutUs = () => {
                     <li data-details="Component-Based Architecture, SPA">Frontend: React.js and Vite</li>
                     <li data-details="Relational Database, Data Persistence">Database: PostgreSQL</li>
                     <li data-details="Version Control System, Collaboration">Version Control: Git</li>
-                    <li data-details="API Documentation Tool, Testing">API Documentation: Swagger</li>
                 </ul>
             </div>
         </div>
