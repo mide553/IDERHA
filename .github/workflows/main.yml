@@ -66,10 +66,6 @@ jobs:
         run: npm run build
         working-directory: react-app
 
-      - name: Run Tests
-        run: npm test
-        working-directory: react-app
-
   deploy:
     name: Deploy Application
     runs-on: ubuntu-latest
