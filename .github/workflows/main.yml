@@ -78,7 +78,12 @@ jobs:
       - name: Deploy Backend
         run: |
           echo "Deploying backend..."
-          java -jar backend/target/demo-0.0.1-SNAPSHOT.jar
+          if [ -f backend/target/demo-0.0.1-SNAPSHOT.jar ]; then
+            java -jar backend/target/demo-0.0.1-SNAPSHOT.jar
+          else
+            echo "Error: JAR file not found. Ensure the backend build step completed successfully."
+            exit 1
+          fi
 
       - name: Deploy Frontend
         run: |
