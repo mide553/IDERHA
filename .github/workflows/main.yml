@@ -76,10 +76,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Deploy Backend
+        working-directory: backend
         run: |
           echo "Deploying backend..."
-          if [ -f backend/target/demo-0.0.1-SNAPSHOT.jar ]; then
-            java -jar backend/target/demo-0.0.1-SNAPSHOT.jar
+          if [ -f target/demo-0.0.1-SNAPSHOT.jar ]; then
+            java -jar target/demo-0.0.1-SNAPSHOT.jar
           else
             echo "Error: JAR file not found. Ensure the backend build step completed successfully."
             exit 1
