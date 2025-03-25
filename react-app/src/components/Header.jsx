@@ -13,7 +13,7 @@ const Header = ({ isSignedIn, setIsSignedIn }) => {
     return (
         <header className="header">
             <div className="logo">
-                <Link to={isSignedIn ? "/welcome" : "/"} className="logo-link">IDERHA</Link>
+                <Link to={isSignedIn ? "/welcome" : "/"} className="logo-link">eHealth Insights</Link>
             </div>
             <nav className="nav">
                 {!isSignedIn ? (

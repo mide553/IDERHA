@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: iderha_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: IDERHA
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+      # SQL Files need to be in alphabetical order
+      # 1_ddl.sql -> 2_primary_keys.sql -> 3_indices.sql -> 4_basic_sample_data_for_testing.sql
+
+volumes:
+  postgres_data:

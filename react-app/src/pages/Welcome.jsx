@@ -5,11 +5,11 @@ const Welcome = () => {
     return (
         <div className="welcome-main">
             <div className="welcome-text">
-                <h1>Welcome to IDERHA</h1>
-                <p>your trusted platform for securely managing and analyzing health data. 
-                    Whether you're a healthcare provider or a patient, IDERHA 
-                    ensures a seamless and secure exchange of healthcare data 
-                    in compliance with the highest privacy standards.</p>
+                <h1>Welcome to eHealth Insights</h1>
+                <p>Welcome to the eHealth Insights, your innovative eHealth Data Space. 
+                    Our platform is designed to securely manage and analyze health data, 
+                    ensuring a seamless and secure exchange of healthcare information 
+                    while maintaining the highest standards of privacy and security</p>
             </div>
             <div className="welcome-image-full">
                 <img src="/src/img/Image1.png" alt="Description of image 1" />
