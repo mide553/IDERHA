@@ -1,8 +1,8 @@
-## 1. Start pgAdmin 4 Database ##
-## database = IDERHA
-## database port = 5432
-## username = postgres
-## password = postgres
+## 1. Compose Docker Database
+##  install docker https://docs.docker.com/get-started/get-docker/
+##  install docker-compose https://docs.docker.com/compose/install/
+##  navigate to IDERHA directory
+docker-compose up -d
 
 
 ## 2. Start Backend Server ##
