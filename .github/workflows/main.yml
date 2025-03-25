@@ -17,6 +17,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Ensure Maven Wrapper is Executable
+        run: chmod +x backend/mvnw
+
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -32,7 +35,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build Backend
-        run: ./mvnw -f backend/pom.xml clean package
+        run: backend/mvnw -f backend/pom.xml clean package
 
   frontend:
     name: Frontend Build and Test
