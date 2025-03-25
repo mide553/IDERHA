@@ -10,7 +10,7 @@ on:
 
 jobs:
   backend:
-    name: Backend Build and Test
+    name: Backend Build
     runs-on: ubuntu-latest
 
     steps:
@@ -32,10 +32,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build Backend
-        run: mvn -f backend/pom.xml clean package
-
-      - name: Run Tests
-        run: mvn -f backend/pom.xml test
+        run: ./mvnw -f backend/pom.xml clean package
 
   frontend:
     name: Frontend Build and Test
@@ -76,17 +73,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Deploy Backend
-        working-directory: backend
         run: |
           echo "Deploying backend..."
-          if [ -f target/demo-0.0.1-SNAPSHOT.jar ]; then
-            java -jar target/demo-0.0.1-SNAPSHOT.jar
-          else
-            echo "Error: JAR file not found. Ensure the backend build step completed successfully."
-            exit 1
-          fi
+          nohup java -jar backend/target/demo-0.0.1-SNAPSHOT.jar &
 
       - name: Deploy Frontend
         run: |
           echo "Deploying frontend..."
-          npx serve -s react-app/dist
+          npx serve -s react-app/dist -l 3000 &
