@@ -1,6 +1,16 @@
 --sql server CDM DDL Specification for OMOP Common Data Model 5.4
 
 --HINT DISTRIBUTE ON KEY (person_id)
+
+CREATE TABLE public.USERS (
+                              id SERIAL PRIMARY KEY,
+                              email VARCHAR(255) UNIQUE NOT NULL,
+                              password VARCHAR(255) NOT NULL,
+                              name VARCHAR(255) NOT NULL,
+                              surname VARCHAR(255) NOT NULL,
+                              job VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE public.PERSON (
 			person_id integer NOT NULL,
 			gender_concept_id integer NOT NULL,

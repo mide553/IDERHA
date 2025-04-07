@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import '../css/SignIn.css';
 
 const SignIn = ({ setIsSignedIn }) => {
@@ -8,20 +9,26 @@ const SignIn = ({ setIsSignedIn }) => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const templateAccount = {
-        email: 'test@test.com',
-        password: '12345678'
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (email === templateAccount.email && password === templateAccount.password) {
-            console.log('Sign In Successful');
-            setError('');
-            setIsSignedIn(true);
-            navigate('/welcome');
-        } else {
-            setError('Invalid email or password');
+        try {
+            const response = await fetch('http://localhost:8080/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                setIsSignedIn(true);
+                navigate('/welcome');
+            } else {
+                setError(data.message);
+            }
+        } catch (err) {
+            console.error('Error during sign-in:', err);
+            setError('An error occurred. Please try again.');
         }
     };
 
@@ -52,6 +59,10 @@ const SignIn = ({ setIsSignedIn }) => {
             </form>
         </div>
     );
+};
+
+SignIn.propTypes = {
+    setIsSignedIn: PropTypes.func.isRequired,
 };
 
 export default SignIn;

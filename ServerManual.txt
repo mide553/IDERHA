@@ -15,7 +15,7 @@ mvn spring-boot:run
 
 
 
-## 3. Start Frontend Server ##
+## 3. Start cd s Server ##
 
 cd react-app
 ## Check node.js and Node Package Manager if installed
