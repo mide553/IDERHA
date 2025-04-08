@@ -17,6 +17,7 @@ const SignIn = ({ setIsSignedIn }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({ email, password }),
             });
             const data = await response.json();
@@ -37,8 +38,9 @@ const SignIn = ({ setIsSignedIn }) => {
             <h2>Login to eHealth Insights</h2>
             <form className="signin-form" onSubmit={handleSubmit}>
                 <div>
-                    <label>Email:</label>
+                    <label htmlFor="email">Email:</label>
                     <input
+                        id="email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -46,8 +48,9 @@ const SignIn = ({ setIsSignedIn }) => {
                     />
                 </div>
                 <div>
-                    <label>Password:</label>
+                    <label htmlFor="password">Password:</label>
                     <input
+                        id="password"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}

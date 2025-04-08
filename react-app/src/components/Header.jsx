@@ -5,10 +5,19 @@ import '../css/Header.css';
 const Header = ({ isSignedIn, setIsSignedIn }) => {
     const navigate = useNavigate();
 
-    const handleSignOut = () => {
-        setIsSignedIn(false);
-        navigate('/');
+    const handleSignOut = async () => {
+        try {
+            await fetch('http://localhost:8080/api/users/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+            setIsSignedIn(false);
+            navigate('/signin');
+        } catch (err) {
+            console.error('Error during logout:', err);
+        }
     };
+
 
     return (
         <header className="header">

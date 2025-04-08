@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -14,6 +14,30 @@ import './css/Main.css';
 
 const App = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [loading, setLoading] = useState(true); // For waiting session check
+
+  useEffect(() => {
+    // Check session on initial load
+    const checkSession = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/users/check-session', {
+          credentials: 'include', // 🔥 This is important for cookies/session!
+        });
+        const data = await response.json();
+        if (data.status === 'success') {
+          setIsSignedIn(true);
+        }
+      } catch (err) {
+        console.log('No active session.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
+  }, []);
+
+  if (loading) return <div>Loading...</div>; // Show loading while checking
 
   return (
       <div className="app-container">
