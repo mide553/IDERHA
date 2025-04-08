@@ -4,6 +4,10 @@
 ##  navigate to IDERHA directory
 docker-compose up -d
 
+## Connect to docker using shell if needed
+
+docker exec -it iderha_postgres psql -U postgres -d IDERHA
+
 
 ## 2. Start Backend Server ##
 
@@ -27,3 +31,16 @@ npm run dev
 ## cd react-app
 ## npm install
 ## npm install -g vite
+
+
+
+## 4. Testing Frontend
+
+## Install vitest and jsdom packages for testing:
+cd react-app
+npm install vitest --save-dev
+npm install jsdom --save-dev
+
+## Run tests:
+cd react-app
+npm test
