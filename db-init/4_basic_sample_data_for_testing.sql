@@ -3,7 +3,10 @@ TRUNCATE TABLE condition_occurrence CASCADE;
 TRUNCATE TABLE concept CASCADE;
 TRUNCATE TABLE person CASCADE;
 TRUNCATE TABLE drug_exposure CASCADE;
+TRUNCATE TABLE users CASCADE;
 
+INSERT INTO users (email, password, name, surname, job)
+VALUES ('admin@admin.com', 'admin', 'Admin', 'Admin', 'Admin');
 
 -- Insert people with fixed values instead of generate_series
 INSERT INTO person (
