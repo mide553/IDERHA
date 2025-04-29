@@ -17,5 +17,19 @@ services:
       # SQL Files need to be in alphabetical order
       # 1_ddl.sql -> 2_primary_keys.sql -> 3_indices.sql -> 4_basic_sample_data_for_testing.sql
 
+  private_db:
+    image: postgres:15
+    container_name: private_db_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: private_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - private_db_data:/var/lib/postgresql/data
+
 volumes:
   postgres_data:
+  private_db_data:
