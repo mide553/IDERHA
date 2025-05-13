@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InnoIderhaApplication {
+public class eHealth_Insights_Application {
 	public static void main(String[] args) {
-		SpringApplication.run(InnoIderhaApplication.class, args);
+		SpringApplication.run(eHealth_Insights_Application.class, args);
 	}
 }

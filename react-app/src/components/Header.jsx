@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/Header.css';
 
-const Header = ({ isSignedIn, setIsSignedIn }) => {
+const Header = ({ isSignedIn, setIsSignedIn, userRole }) => {
     const navigate = useNavigate();
 
     const handleSignOut = async () => {
@@ -33,6 +33,7 @@ const Header = ({ isSignedIn, setIsSignedIn }) => {
                         <Link to="/analytics">Analytics</Link>
                         <Link to="/help">Help</Link>
                         <Link to="/about-us">About Us</Link>
+                        {userRole === 'admin' && <Link to="/manage-users">Manage Users</Link>}
                         <button onClick={handleSignOut} className="nav-button">Sign Out</button>
                     </>
                 )}

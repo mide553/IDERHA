@@ -9,18 +9,19 @@ import jakarta.persistence.Table;
 public class User {
     @Id
     private String email;
+    private String role;
     private String password;
-
 
     public String getEmail() {
         return email;
     }
 
+    public String getRole() {
+        return role;
+    }
 
     public String getPassword() {
         return password;
     }
-
-
 
 }

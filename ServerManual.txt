@@ -6,7 +6,7 @@ docker-compose up -d
 
 ## Connect to docker using shell if needed
 
-docker exec -it iderha_postgres psql -U postgres -d IDERHA
+docker exec -it eHealth_Insights_postgres_private psql -U postgres -d private_eHealth_Insights
 
 
 ## 2. Start Backend Server ##

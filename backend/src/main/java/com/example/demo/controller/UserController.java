@@ -30,6 +30,7 @@ public class UserController {
             session.setAttribute("user", user);
             response.put("status", "success");
             response.put("email", user.getEmail());
+            response.put("role", user.getRole());
             return ResponseEntity.ok(response);
         } else {
             response.put("status", "error");
@@ -37,7 +38,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
-
 
     @GetMapping("/check-session")
     public ResponseEntity<Map<String, String>> checkSession(HttpSession session) {
@@ -47,6 +47,7 @@ public class UserController {
         if (user != null) {
             response.put("status", "success");
             response.put("email", user.getEmail());
+            response.put("role", user.getRole());
             return ResponseEntity.ok(response);
         } else {
             response.put("status", "error");
@@ -54,7 +55,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
-
 
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(HttpSession session) {
