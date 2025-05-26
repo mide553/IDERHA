@@ -30,10 +30,11 @@ const Header = ({ isSignedIn, setIsSignedIn, userRole }) => {
                 ) : (
                     <>
                         <Link to="/welcome">Home</Link>
-                        <Link to="/analytics">Analytics</Link>
                         <Link to="/help">Help</Link>
                         <Link to="/about-us">About Us</Link>
-                        {userRole === 'admin' && <Link to="/manage-users">Manage Users</Link>}
+                        <Link to="/analytics">Analytics</Link>
+                        {(userRole === 'admin' || userRole === 'hospital') && <Link to="/manage-users">Manage Users</Link>}
+                        {(userRole === 'hospital' || userRole === 'admin') && <Link to="/upload-data">Upload Data</Link>}
                         <button onClick={handleSignOut} className="nav-button">Sign Out</button>
                     </>
                 )}

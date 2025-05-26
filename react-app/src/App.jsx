@@ -11,6 +11,8 @@ import Help from './pages/Help';
 import AboutUs from './pages/AboutUs';
 import Analytics from './pages/Analytics';
 import ManageUsers from './pages/ManageUsers';
+import UploadData from './pages/UploadData';
+import ProtectedRoute from './components/ProtectedRoute';
 import './css/Main.css';
 
 const App = () => {
@@ -55,7 +57,14 @@ const App = () => {
             <Route path="/help" element={isSignedIn ? <Help /> : <Navigate to="/signin" />} />
             <Route path="/about-us" element={isSignedIn ? <AboutUs /> : <Navigate to="/signin" />} />
             <Route path="/analytics" element={isSignedIn ? <Analytics /> : <Navigate to="/signin" />} />
-            <Route path="/manage-users" element={isSignedIn && userRole === 'admin' ? <ManageUsers /> : <Navigate to="/signin" />} />
+            <Route path="/manage-users" element={
+              isSignedIn ? (
+                <ProtectedRoute allowedRoles={['admin', 'hospital']}>
+                  <ManageUsers />
+                </ProtectedRoute>
+              ) : <Navigate to="/signin" />
+            } />
+            <Route path="/upload-data" element={isSignedIn ? <UploadData /> : <Navigate to="/signin" />} />
           </Routes>
         </main>
         <Footer />

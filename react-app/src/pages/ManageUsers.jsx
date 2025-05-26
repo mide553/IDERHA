@@ -6,13 +6,29 @@ const ManageUsers = () => {
     const [newUser, setNewUser] = useState({ email: '', password: '', firstname: '', lastname: '', role: 'researcher' });
     const [editingUser, setEditingUser] = useState(null);
     const [originalEmail, setOriginalEmail] = useState(null);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState(null); const [currentUserRole, setCurrentUserRole] = useState(null);
+    const [currentUserEmail, setCurrentUserEmail] = useState(null);
+    const [roleFilter, setRoleFilter] = useState('all');
 
     useEffect(() => {
         fetchUsers();
-    }, []); const fetchUsers = async () => {
+        getCurrentUserRole();
+    }, []); const getCurrentUserRole = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/users', {
+            const response = await fetch('http://localhost:8080/api/users/check-session', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setCurrentUserRole(data.role);
+                setCurrentUserEmail(data.email);
+            }
+        } catch (err) {
+            console.error('Failed to get current user role:', err);
+        }
+    }; const fetchUsers = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/users/admin/users', {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -28,7 +44,7 @@ const ManageUsers = () => {
         }
     }; const handleAddUser = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/users', {
+            const response = await fetch('http://localhost:8080/api/users/admin/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -46,7 +62,7 @@ const ManageUsers = () => {
         }
     }; const handleEditUser = async (user) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/users/${originalEmail}`, {
+            const response = await fetch(`http://localhost:8080/api/users/admin/users/${originalEmail}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -71,7 +87,7 @@ const ManageUsers = () => {
         }
     }; const handleDeleteUser = async (email) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/users/${email}`, {
+            const response = await fetch(`http://localhost:8080/api/users/admin/users/${email}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -116,75 +132,103 @@ const ManageUsers = () => {
                     placeholder="Last Name"
                     value={newUser.lastname}
                     onChange={(e) => setNewUser({ ...newUser, lastname: e.target.value })}
-                />
-                <select
+                />                <select
                     value={newUser.role}
                     onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                 >
                     <option value="researcher">Researcher</option>
-                    <option value="admin">Admin</option>
+                    {currentUserRole === 'admin' && <option value="admin">Admin</option>}
+                    {currentUserRole === 'admin' && <option value="hospital">Hospital</option>}
                 </select>
                 <button onClick={handleAddUser}>Add User</button>
-            </div>
-
-            <div className="manageusers-list">
+            </div>            <div className="manageusers-list">
                 <h2>Existing Users</h2>
-                {users.map((user) => (
-                    <div key={user.email} className={`user-item ${editingUser && originalEmail === user.email ? 'editing' : ''}`}>                        {editingUser && originalEmail === user.email ? (
-                        <div className="edit-user-form">
-                            <p>Email</p>
-                            <input
-                                type="email"
-                                value={editingUser.email}
-                                onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                            />
-                            <p>Password</p>
-                            <input
-                                type="password"
-                                placeholder="Enter new password (leave empty to keep current)"
-                                value={editingUser.password || ''}
-                                onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
-                            />
-                            <p>Firstname</p>
-                            <input
-                                type="text"
-                                value={editingUser.firstname}
-                                onChange={(e) => setEditingUser({ ...editingUser, firstname: e.target.value })}
-                            />
-                            <p>Lastname</p>
-                            <input
-                                type="text"
-                                value={editingUser.lastname}
-                                onChange={(e) => setEditingUser({ ...editingUser, lastname: e.target.value })}
-                            />
-                            <p>Role</p>
-                            <select
-                                value={editingUser.role}
-                                onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
-                            >
-                                <option value="researcher">Researcher</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                            <button className="save" onClick={() => handleEditUser(editingUser)}>Save</button>
-                            <button className="cancel" onClick={() => {
-                                setEditingUser(null);
-                                setOriginalEmail(null);
-                            }}>Cancel</button>
-                        </div>
-                    ) : (
-                        <div>
-                            <p><strong>Email:</strong> {user.email}</p>
-                            <p><strong>Name:</strong> {user.firstname} {user.lastname}</p>
-                            <p><strong>Role:</strong> {user.role}</p>
-                            <button className="edit" onClick={() => {
-                                setEditingUser(user);
-                                setOriginalEmail(user.email);
-                            }}>Edit</button>
-                            <button onClick={() => handleDeleteUser(user.email)}>Delete</button>
-                        </div>
-                    )}
+                {currentUserRole === 'admin' && (
+                    <div className="filter-section">
+                        <label htmlFor="roleFilter">Filter by Role: </label>
+                        <select
+                            id="roleFilter"
+                            value={roleFilter}
+                            onChange={(e) => setRoleFilter(e.target.value)}
+                            className="role-filter"
+                        >
+                            <option value="all">All Users</option>
+                            <option value="admin">Admins</option>
+                            <option value="hospital">Hospitals</option>
+                            <option value="researcher">Researchers</option>
+                        </select>
                     </div>
-                ))}
+                )}
+                {users
+                    .filter(user => !(currentUserRole === 'hospital' && user.role === 'admin'))
+                    .filter(user => roleFilter === 'all' || user.role === roleFilter)
+                    .map((user) => (
+                        <div key={user.email} className={`user-item ${editingUser && originalEmail === user.email ? 'editing' : ''}`}>                        {editingUser && originalEmail === user.email ? (
+                            <div className="edit-user-form">
+                                <p>Email</p>
+                                <input
+                                    type="email"
+                                    value={editingUser.email}
+                                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                                />
+                                <p>Password</p>
+                                <input
+                                    type="password"
+                                    placeholder="Enter new password (leave empty to keep current)"
+                                    value={editingUser.password || ''}
+                                    onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
+                                />
+                                <p>Firstname</p>
+                                <input
+                                    type="text"
+                                    value={editingUser.firstname}
+                                    onChange={(e) => setEditingUser({ ...editingUser, firstname: e.target.value })}
+                                />
+                                <p>Lastname</p>
+                                <input
+                                    type="text"
+                                    value={editingUser.lastname}
+                                    onChange={(e) => setEditingUser({ ...editingUser, lastname: e.target.value })}
+                                />
+                                <p>Role</p>                                <select
+                                    value={editingUser.role}
+                                    onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
+                                    disabled={currentUserRole === 'hospital' && user.role === 'admin'}
+                                >
+                                    <option value="researcher">Researcher</option>
+                                    {currentUserRole === 'admin' && <option value="admin">Admin</option>}
+                                    {currentUserRole === 'admin' && <option value="hospital">Hospital</option>}
+                                </select>
+                                <button className="save" onClick={() => handleEditUser(editingUser)}>Save</button>
+                                <button className="cancel" onClick={() => {
+                                    setEditingUser(null);
+                                    setOriginalEmail(null);
+                                }}>Cancel</button>
+                            </div>) : (<div>                                <p><strong>Email:</strong> {user.email}</p>
+                                <p><strong>Name:</strong> {user.firstname} {user.lastname}</p>
+                                {currentUserRole === 'admin' && (
+                                    <p><strong>Role:</strong> {user.role}</p>
+                                )}
+                                {currentUserRole === 'admin' && (
+                                    <p><strong>Created By:</strong> {user.createdBy || 'N/A'}</p>
+                                )}
+                                <button className="edit" onClick={() => {
+                                    setEditingUser(user);
+                                    setOriginalEmail(user.email);
+                                }}>Edit</button>
+                                {/* Users cannot delete themselves */}
+                                {user.email !== currentUserEmail && (
+                                    <button onClick={() => handleDeleteUser(user.email)}>Delete</button>
+                                )}
+                                {user.email === currentUserEmail && (
+                                    <span style={{ color: '#888', fontStyle: 'italic', marginLeft: '10px' }}>
+                                        (Cannot delete yourself)
+                                    </span>
+                                )}
+                            </div>
+                        )}
+                        </div>
+                    ))}
             </div>
         </div>
     );

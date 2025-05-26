@@ -189,3 +189,35 @@
     border-radius: 4px;
     font-size: 1rem;
 }
+
+/* Filter section styling */
+.filter-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.filter-section label {
+    font-weight: 600;
+    margin-right: 10px;
+    color: #495057;
+}
+
+.role-filter {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+    color: #495057;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.role-filter:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}

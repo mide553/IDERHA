@@ -163,8 +163,8 @@ const Analytics = () => {
                             setError(null);
                         }}
                     >
-                        <option value="public">Public Database (5433)</option>
-                        <option value="public2">Public Database 2 (5434)</option>
+                        <option value="public">Hospital 1 (5433)</option>
+                        <option value="public2">Hospital 2 (5434)</option>
                     </select>
                 </div>
 
@@ -189,10 +189,7 @@ const Analytics = () => {
                     </button>
                 </div>
 
-                <div className="status-container">
-                    {error && <div className="error-message">Error: {error}</div>}
-                    {loading && <div className="loading">Loading...</div>}
-                </div>
+
 
                 <div className="query-buttons">
                     {activeTab === 'basic' && (
@@ -235,6 +232,10 @@ const Analytics = () => {
                         {formatQueryResult(queryResult)}
                     </div>
                 )}
+                <div className="status-container">
+                    {error && <div className="error-message">Error: {error}</div>}
+                    {loading && <div className="loading">Loading...</div>}
+                </div>
             </div>
         </div>
     );
