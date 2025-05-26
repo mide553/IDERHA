@@ -56,7 +56,7 @@ const ProtectedRoute = ({ children, allowedRoles = [], fallbackMessage = "Access
             }}>
                 <h2>Access Denied</h2>
                 <p>You need to be logged in to access this page.</p>
-                <p>Please <a href="/login" style={{ color: '#3498db' }}>login</a> to continue.</p>
+                <p>Please <a href="/sigin" style={{ color: '#3498db' }}>login</a> to continue.</p>
             </div>
         );
     }
