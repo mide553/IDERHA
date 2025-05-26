@@ -7,7 +7,7 @@ docker-compose up -d
 ## Connect to docker using shell if needed
 
 docker exec -it eHealth_Insights_postgres_private psql -U postgres -d private_eHealth_Insights
-
+docker exec -it eHealth_Insights_postgres_public psql -U postgres -d public_eHealth_Insights
 
 ## 2. Start Backend Server ##
 
