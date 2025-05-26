@@ -5,38 +5,38 @@ const ManageUsers = () => {
     const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState({ email: '', password: '', firstname: '', lastname: '', role: 'researcher' });
     const [editingUser, setEditingUser] = useState(null);
+    const [originalEmail, setOriginalEmail] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchUsers();
-    }, []);
-
-    const fetchUsers = async () => {
+    }, []); const fetchUsers = async () => {
         try {
-            const query = "SELECT * FROM users";
-            const response = await fetch('http://localhost:8080/api/pg-query', {
-                method: 'POST',
+            const response = await fetch('http://localhost:8080/api/admin/users', {
+                method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query }),
+                credentials: 'include',
             });
-            const data = await response.json();
-            setUsers(data);
+            if (response.ok) {
+                const data = await response.json();
+                setUsers(data);
+            } else {
+                setError('Failed to fetch users.');
+            }
         } catch (err) {
             setError('Failed to fetch users.');
         }
-    };
-
-    const handleAddUser = async () => {
+    }; const handleAddUser = async () => {
         try {
-            const query = `INSERT INTO users (email, password, firstname, lastname, role) VALUES ('${newUser.email}', '${newUser.password}', '${newUser.firstname}', '${newUser.lastname}', '${newUser.role}') RETURNING *`;
-            const response = await fetch('http://localhost:8080/api/pg-query', {
+            const response = await fetch('http://localhost:8080/api/admin/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query }),
+                credentials: 'include',
+                body: JSON.stringify(newUser),
             });
             if (response.ok) {
                 const addedUser = await response.json();
-                setUsers((prevUsers) => [...prevUsers, addedUser[0]]);
+                setUsers((prevUsers) => [...prevUsers, addedUser]);
                 setNewUser({ email: '', password: '', firstname: '', lastname: '', role: 'researcher' });
             } else {
                 setError('Failed to add user.');
@@ -44,35 +44,37 @@ const ManageUsers = () => {
         } catch (err) {
             setError('Failed to add user.');
         }
-    };
-
-    const handleEditUser = async (user) => {
+    }; const handleEditUser = async (user) => {
         try {
-            const query = `UPDATE users SET firstname = '${user.firstname}', lastname = '${user.lastname}', role = '${user.role}' WHERE email = '${user.email}' RETURNING *`;
-            const response = await fetch('http://localhost:8080/api/pg-query', {
-                method: 'POST',
+            const response = await fetch(`http://localhost:8080/api/admin/users/${originalEmail}`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query }),
+                credentials: 'include',
+                body: JSON.stringify({
+                    email: user.email,
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    role: user.role,
+                    password: user.password
+                }),
             });
             if (response.ok) {
                 const updatedUser = await response.json();
-                setUsers((prevUsers) => prevUsers.map((u) => (u.email === updatedUser[0].email ? updatedUser[0] : u)));
+                setUsers((prevUsers) => prevUsers.map((u) => (u.email === originalEmail ? updatedUser : u)));
                 setEditingUser(null);
+                setOriginalEmail(null);
             } else {
                 setError('Failed to edit user.');
             }
         } catch (err) {
             setError('Failed to edit user.');
         }
-    };
-
-    const handleDeleteUser = async (email) => {
+    }; const handleDeleteUser = async (email) => {
         try {
-            const query = `DELETE FROM users WHERE email = '${email}' RETURNING email`;
-            const response = await fetch('http://localhost:8080/api/pg-query', {
-                method: 'POST',
+            const response = await fetch(`http://localhost:8080/api/admin/users/${email}`, {
+                method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query }),
+                credentials: 'include',
             });
             if (response.ok) {
                 setUsers((prevUsers) => prevUsers.filter((u) => u.email !== email));
@@ -128,39 +130,59 @@ const ManageUsers = () => {
             <div className="manageusers-list">
                 <h2>Existing Users</h2>
                 {users.map((user) => (
-                    <div key={user.email} className={`user-item ${editingUser?.email === user.email ? 'editing' : ''}`}>
-                        {editingUser?.email === user.email ? (
-                            <div className="edit-user-form">
-                                <p>Firstname</p>
-                                <input
-                                    type="text"
-                                    value={editingUser.firstname}
-                                    onChange={(e) => setEditingUser({ ...editingUser, firstname: e.target.value })}
-                                />
-                                <p>Lastname</p>
-                                <input
-                                    type="text"
-                                    value={editingUser.lastname}
-                                    onChange={(e) => setEditingUser({ ...editingUser, lastname: e.target.value })}
-                                />
-                                <p>Role</p>
-                                <select
-                                    value={editingUser.role}
-                                    onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
-                                >
-                                    <option value="researcher">Researcher</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                                <button className="save" onClick={() => handleEditUser(editingUser)}>Save</button>
-                                <button className="cancel" onClick={() => setEditingUser(null)}>Cancel</button>
-                            </div>
-                        ) : (
-                            <div>
-                                <p>{user.firstname} {user.lastname} ({user.role})</p>
-                                <button className="edit" onClick={() => setEditingUser(user)}>Edit</button>
-                                <button onClick={() => handleDeleteUser(user.email)}>Delete</button>
-                            </div>
-                        )}
+                    <div key={user.email} className={`user-item ${editingUser && originalEmail === user.email ? 'editing' : ''}`}>                        {editingUser && originalEmail === user.email ? (
+                        <div className="edit-user-form">
+                            <p>Email</p>
+                            <input
+                                type="email"
+                                value={editingUser.email}
+                                onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                            />
+                            <p>Password</p>
+                            <input
+                                type="password"
+                                placeholder="Enter new password (leave empty to keep current)"
+                                value={editingUser.password || ''}
+                                onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
+                            />
+                            <p>Firstname</p>
+                            <input
+                                type="text"
+                                value={editingUser.firstname}
+                                onChange={(e) => setEditingUser({ ...editingUser, firstname: e.target.value })}
+                            />
+                            <p>Lastname</p>
+                            <input
+                                type="text"
+                                value={editingUser.lastname}
+                                onChange={(e) => setEditingUser({ ...editingUser, lastname: e.target.value })}
+                            />
+                            <p>Role</p>
+                            <select
+                                value={editingUser.role}
+                                onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
+                            >
+                                <option value="researcher">Researcher</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <button className="save" onClick={() => handleEditUser(editingUser)}>Save</button>
+                            <button className="cancel" onClick={() => {
+                                setEditingUser(null);
+                                setOriginalEmail(null);
+                            }}>Cancel</button>
+                        </div>
+                    ) : (
+                        <div>
+                            <p><strong>Email:</strong> {user.email}</p>
+                            <p><strong>Name:</strong> {user.firstname} {user.lastname}</p>
+                            <p><strong>Role:</strong> {user.role}</p>
+                            <button className="edit" onClick={() => {
+                                setEditingUser(user);
+                                setOriginalEmail(user.email);
+                            }}>Edit</button>
+                            <button onClick={() => handleDeleteUser(user.email)}>Delete</button>
+                        </div>
+                    )}
                     </div>
                 ))}
             </div>
