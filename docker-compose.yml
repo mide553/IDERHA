@@ -27,6 +27,21 @@ services:
       - postgres_public:/var/lib/postgresql/data
       - ./db-init/public/:/docker-entrypoint-initdb.d
 
+  public2:
+    image: postgres:15
+    container_name: eHealth_Insights_postgres_public_2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: public_eHealth_Insights_2
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_public_2:/var/lib/postgresql/data
+      - ./db-init/public2/:/docker-entrypoint-initdb.d
+
 volumes:
   postgres_private:
   postgres_public:
+  postgres_public_2:

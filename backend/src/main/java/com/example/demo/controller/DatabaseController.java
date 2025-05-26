@@ -17,6 +17,18 @@ public class DatabaseController {
     @PostMapping("/pg-query")
     public List<Map<String, Object>> executeQuery(@RequestBody Map<String, String> request) {
         String query = request.get("query");
-        return databaseService.executeQuery(query);
+        String database = request.get("database"); // optional parameter
+
+        if (database != null) {
+            return databaseService.executeQueryOnDatabase(query, database);
+        } else {
+            return databaseService.executeQuery(query);
+        }
+    }
+
+    @PostMapping("/pg-query-public2")
+    public List<Map<String, Object>> executeQueryOnPublic2(@RequestBody Map<String, String> request) {
+        String query = request.get("query");
+        return databaseService.executeQueryOnPublic2(query);
     }
 }
