@@ -9,11 +9,12 @@ import jakarta.persistence.Table;
 public class User {
     @Id
     private String email;
-    private String role; // admin, researcher, hospital
+    private String role; 
     private String password;
     private String firstname;
     private String lastname;
     private String createdBy;
+    private String assignedDatabase; 
 
     // Get
     public String getEmail() {
@@ -40,6 +41,10 @@ public class User {
         return createdBy;
     }
 
+    public String getAssignedDatabase() {
+        return assignedDatabase;
+    }
+
     // Set
     public void setEmail(String email) {
         this.email = email;
@@ -63,5 +68,9 @@ public class User {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public void setAssignedDatabase(String assignedDatabase) {
+        this.assignedDatabase = assignedDatabase;
     }
 }

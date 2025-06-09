@@ -3,7 +3,7 @@ import '../css/ManageUsers.css';
 
 const ManageUsers = () => {
     const [users, setUsers] = useState([]);
-    const [newUser, setNewUser] = useState({ email: '', password: '', firstname: '', lastname: '', role: 'researcher' });
+    const [newUser, setNewUser] = useState({ email: '', password: '', firstname: '', lastname: '', role: 'researcher', assignedDatabase: '' });
     const [editingUser, setEditingUser] = useState(null);
     const [originalEmail, setOriginalEmail] = useState(null);
     const [error, setError] = useState(null); const [currentUserRole, setCurrentUserRole] = useState(null);
@@ -53,7 +53,7 @@ const ManageUsers = () => {
             if (response.ok) {
                 const addedUser = await response.json();
                 setUsers((prevUsers) => [...prevUsers, addedUser]);
-                setNewUser({ email: '', password: '', firstname: '', lastname: '', role: 'researcher' });
+                setNewUser({ email: '', password: '', firstname: '', lastname: '', role: 'researcher', assignedDatabase: '' });
             } else {
                 setError('Failed to add user.');
             }
@@ -71,7 +71,8 @@ const ManageUsers = () => {
                     firstname: user.firstname,
                     lastname: user.lastname,
                     role: user.role,
-                    password: user.password
+                    password: user.password,
+                    assignedDatabase: user.assignedDatabase
                 }),
             });
             if (response.ok) {
@@ -132,7 +133,18 @@ const ManageUsers = () => {
                     placeholder="Last Name"
                     value={newUser.lastname}
                     onChange={(e) => setNewUser({ ...newUser, lastname: e.target.value })}
-                />                <select
+                />
+                {newUser.role === 'hospital' && (
+                    <select
+                        value={newUser.assignedDatabase}
+                        onChange={(e) => setNewUser({ ...newUser, assignedDatabase: e.target.value })}
+                    >
+                        <option value="">Select Database</option>
+                        <option value="public">Hospital 1 (5433)</option>
+                        <option value="public2">Hospital 2 (5434)</option>
+                    </select>
+                )}
+                <select
                     value={newUser.role}
                     onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                 >
@@ -190,7 +202,21 @@ const ManageUsers = () => {
                                     value={editingUser.lastname}
                                     onChange={(e) => setEditingUser({ ...editingUser, lastname: e.target.value })}
                                 />
-                                <p>Role</p>                                <select
+                                <p>Role</p>
+                                {editingUser.role === 'hospital' && (
+                                    <>
+                                        <p>Assigned Database</p>
+                                        <select
+                                            value={editingUser.assignedDatabase || ''}
+                                            onChange={(e) => setEditingUser({ ...editingUser, assignedDatabase: e.target.value })}
+                                        >
+                                            <option value="">Select Database</option>
+                                            <option value="public">Hospital 1 (5433)</option>
+                                            <option value="public2">Hospital 2 (5434)</option>
+                                        </select>
+                                    </>
+                                )}
+                                <select
                                     value={editingUser.role}
                                     onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
                                     disabled={currentUserRole === 'hospital' && user.role === 'admin'}
@@ -208,6 +234,9 @@ const ManageUsers = () => {
                                 <p><strong>Name:</strong> {user.firstname} {user.lastname}</p>
                                 {currentUserRole === 'admin' && (
                                     <p><strong>Role:</strong> {user.role}</p>
+                                )}
+                                {currentUserRole === 'admin' && user.role === 'hospital' && (
+                                    <p><strong>Assigned Database:</strong> {user.assignedDatabase || 'None'}</p>
                                 )}
                                 {currentUserRole === 'admin' && (
                                     <p><strong>Created By:</strong> {user.createdBy || 'N/A'}</p>

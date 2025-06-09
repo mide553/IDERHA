@@ -102,7 +102,8 @@ export const executeQuery = async (query, database = 'public') => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify(requestBody),
+            credentials: 'include'
         });
 
         if (!response.ok) {
@@ -113,6 +114,39 @@ export const executeQuery = async (query, database = 'public') => {
         return await response.json();
     } catch (error) {
         throw new Error(`Query execution failed: ${error.message}`);
+    }
+};
+
+// Helper function to check if user can access database
+export const canAccessDatabase = async (database) => {
+    try {
+        const response = await fetch('http://localhost:8080/api/users/check-session', {
+            credentials: 'include',
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Admin can access all databases
+            if (data.role === 'admin') {
+                return true;
+            }
+            
+            // Hospital users can only access their assigned database
+            if (data.role === 'hospital') {
+                return data.assignedDatabase === database;
+            }
+            
+            // Researchers can access all databases for viewing
+            if (data.role === 'researcher') {
+                return true;
+            }
+        }
+        
+        return false;
+    } catch (error) {
+        console.error('Error checking database access:', error);
+        return false;
     }
 };
 

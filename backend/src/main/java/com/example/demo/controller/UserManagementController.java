@@ -55,8 +55,9 @@ public class UserManagementController {
                 if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
                     user.setPassword(userDetails.getPassword());
                 }
-                // Handle email change (requires deleting old and creating new due to primary
-                // key)
+                
+                user.setAssignedDatabase(userDetails.getAssignedDatabase());
+
                 if (userDetails.getEmail() != null && !userDetails.getEmail().equals(email)) {
                     userRepository.delete(user);
                     user.setEmail(userDetails.getEmail());

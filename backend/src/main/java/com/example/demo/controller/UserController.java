@@ -24,7 +24,6 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // Login + Save session
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> request, HttpSession session) {
         String email = request.get("email");
@@ -54,6 +53,9 @@ public class UserController {
             response.put("status", "success");
             response.put("email", user.getEmail());
             response.put("role", user.getRole());
+            if (user.getAssignedDatabase() != null) {
+                response.put("assignedDatabase", user.getAssignedDatabase());
+            }
             return ResponseEntity.ok(response);
         } else {
             response.put("status", "error");
@@ -84,7 +86,6 @@ public class UserController {
         List<User> users = userRepository.findAll();
 
         if ("hospital".equals(currentUser.getRole())) {
-            // Hospital users can only see users they created
             users = users.stream()
                     .filter(user -> currentUser.getEmail().equals(user.getCreatedBy()))
                     .collect(Collectors.toList());
@@ -101,7 +102,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
         }
 
-        // Check if user already exists
         if (userRepository.findByEmail(newUser.getEmail()) != null) {
             Map<String, String> response = new HashMap<>();
             response.put("status", "error");
@@ -109,7 +109,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
 
-        // Validate role permissions
         if ("hospital".equals(currentUser.getRole()) &&
                 ("admin".equals(newUser.getRole()) || "hospital".equals(newUser.getRole()))) {
             Map<String, String> response = new HashMap<>();
@@ -118,7 +117,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
-        // Set the creator
+        if ("hospital".equals(newUser.getRole()) && 
+            (newUser.getAssignedDatabase() == null || newUser.getAssignedDatabase().trim().isEmpty())) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", "Hospital users must be assigned a database");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
         newUser.setCreatedBy(currentUser.getEmail());
 
         try {
@@ -148,7 +154,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        // hospital users can only edit users they created
         if ("hospital".equals(currentUser.getRole()) &&
                 !currentUser.getEmail().equals(existingUser.getCreatedBy())) {
             Map<String, String> response = new HashMap<>();
@@ -157,7 +162,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
-        // Validate role change permissions
         if ("hospital".equals(currentUser.getRole()) && "admin".equals(updatedUser.getRole())) {
             Map<String, String> response = new HashMap<>();
             response.put("status", "error");
@@ -165,19 +169,26 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
-        // Update user fields
+        if ("hospital".equals(updatedUser.getRole()) && 
+            (updatedUser.getAssignedDatabase() == null || updatedUser.getAssignedDatabase().trim().isEmpty())) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", "Hospital users must be assigned a database");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setFirstname(updatedUser.getFirstname());
         existingUser.setLastname(updatedUser.getLastname());
         existingUser.setRole(updatedUser.getRole());
+        
+        existingUser.setAssignedDatabase(updatedUser.getAssignedDatabase());
 
-        // Only update password if provided
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().trim().isEmpty()) {
             existingUser.setPassword(updatedUser.getPassword());
         }
 
         try {
-            // Delete old user if email changed
             if (!email.equals(updatedUser.getEmail())) {
                 userRepository.deleteById(email);
             }
