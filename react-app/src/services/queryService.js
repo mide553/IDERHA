@@ -87,13 +87,13 @@ export const queries = {
 };
 
 // Helper function to execute queries
-export const executeQuery = async (query, database = 'public') => {
+export const executeQuery = async (query, database = 'hospital1') => {
     try {
-        const endpoint = database === 'public2'
-            ? 'http://localhost:8080/api/pg-query-public2'
+        const endpoint = database === 'hospital2'
+            ? 'http://localhost:8080/api/pg-query-hospital2'
             : 'http://localhost:8080/api/pg-query';
 
-        const requestBody = database === 'public2'
+        const requestBody = database === 'hospital2'
             ? { query }
             : { query, database };
 

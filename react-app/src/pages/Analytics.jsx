@@ -163,8 +163,8 @@ const Analytics = () => {
                             setError(null);
                         }}
                     >
-                        <option value="public">Hospital 1 (5433)</option>
-                        <option value="public2">Hospital 2 (5434)</option>
+                        <option value="hospital1">Hospital 1 (5433)</option>
+                        <option value="hospital2">Hospital 2 (5434)</option>
                     </select>
                 </div>
 

@@ -14,8 +14,8 @@ CREATE TABLE users (
 INSERT INTO users (email, password, firstname, lastname, role, created_by, assigned_database)
 VALUES 
     ('admin@admin.com', 'admin', 'Admin', 'Admin', 'admin', 'admin', NULL),
-    ('hospital@ehealth.com', 'hospital', 'Hospital', 'Hospital', 'hospital', 'admin@admin.com', 'public'),
-    ('hospital2@ehealth.com', 'hospital2', 'Hospital2', 'Hospital2', 'hospital', 'admin@admin.com', 'public2'),
+    ('hospital@ehealth.com', 'hospital', 'Hospital', 'Hospital', 'hospital', 'admin@admin.com', 'hospital1'),
+    ('hospital2@ehealth.com', 'hospital2', 'Hospital2', 'Hospital2', 'hospital', 'admin@admin.com', 'hospital2'),
     ('johndoe@ehealth.com', 'johndoe', 'John', 'Doe', 'researcher', 'hospital@ehealth.com', NULL),
     ('janedoe@ehealth.com', 'janedoe', 'Jane', 'Doe', 'researcher', 'hospital@ehealth.com', NULL);
 

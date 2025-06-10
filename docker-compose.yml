@@ -13,35 +13,35 @@ services:
       - postgres_private:/var/lib/postgresql/data
       - ./db-init/private/:/docker-entrypoint-initdb.d
 
-  public:
+  hospital1:
     image: postgres:15
-    container_name: eHealth_Insights_postgres_public
+    container_name: eHealth_Insights_postgres_hospital1
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: public_eHealth_Insights
+      POSTGRES_DB: hospital1_eHealth_Insights
     ports:
       - "5433:5432"
     volumes:
-      - postgres_public:/var/lib/postgresql/data
-      - ./db-init/public/:/docker-entrypoint-initdb.d
+      - postgres_hospital1:/var/lib/postgresql/data
+      - ./db-init/hospital1/:/docker-entrypoint-initdb.d
 
-  public2:
+  hospital2:
     image: postgres:15
-    container_name: eHealth_Insights_postgres_public_2
+    container_name: eHealth_Insights_postgres_hospital2
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: public_eHealth_Insights_2
+      POSTGRES_DB: hospital2_eHealth_Insights
     ports:
       - "5434:5432"
     volumes:
-      - postgres_public_2:/var/lib/postgresql/data
-      - ./db-init/public2/:/docker-entrypoint-initdb.d
+      - postgres_hospital2:/var/lib/postgresql/data
+      - ./db-init/hospital2/:/docker-entrypoint-initdb.d
 
 volumes:
   postgres_private:
-  postgres_public:
-  postgres_public_2:
+  postgres_hospital1:
+  postgres_hospital2:

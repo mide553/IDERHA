@@ -140,8 +140,8 @@ const ManageUsers = () => {
                         onChange={(e) => setNewUser({ ...newUser, assignedDatabase: e.target.value })}
                     >
                         <option value="">Select Database</option>
-                        <option value="public">Hospital 1 (5433)</option>
-                        <option value="public2">Hospital 2 (5434)</option>
+                        <option value="hospital1">Hospital 1 (5433)</option>
+                        <option value="hospital2">Hospital 2 (5434)</option>
                     </select>
                 )}
                 <select
@@ -211,8 +211,8 @@ const ManageUsers = () => {
                                             onChange={(e) => setEditingUser({ ...editingUser, assignedDatabase: e.target.value })}
                                         >
                                             <option value="">Select Database</option>
-                                            <option value="public">Hospital 1 (5433)</option>
-                                            <option value="public2">Hospital 2 (5434)</option>
+                                            <option value="hospital1">Hospital 1 (5433)</option>
+                                            <option value="hospital2">Hospital 2 (5434)</option>
                                         </select>
                                     </>
                                 )}
