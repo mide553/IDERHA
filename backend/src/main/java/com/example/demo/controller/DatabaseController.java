@@ -14,6 +14,11 @@ public class DatabaseController {
     @Autowired
     private DatabaseService databaseService;
 
+    @GetMapping("/tables") // debugging --- delete later
+    public List<Map<String, Object>> getTables() {
+        return databaseService.getTables();
+    }
+
     @PostMapping("/pg-query")
     public List<Map<String, Object>> executeQuery(@RequestBody Map<String, String> request) {
         String query = request.get("query");
