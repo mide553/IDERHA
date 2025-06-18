@@ -14,8 +14,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll() // for get tables
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/**").permitAll())
                 .httpBasic(withDefaults());
 
         return http.build();

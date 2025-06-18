@@ -1,21 +1,47 @@
-version: '3.8'
-
 services:
-  postgres:
+  private:
     image: postgres:15
-    container_name: iderha_postgres
+    container_name: eHealth_Insights_postgres_private
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: IDERHA
+      POSTGRES_DB: private_eHealth_Insights
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./db-init:/docker-entrypoint-initdb.d
-      # SQL Files need to be in alphabetical order
-      # 1_ddl.sql -> 2_primary_keys.sql -> 3_indices.sql -> 4_basic_sample_data_for_testing.sql
+      - postgres_private:/var/lib/postgresql/data
+      - ./db-init/private/:/docker-entrypoint-initdb.d
+
+  hospital1:
+    image: postgres:15
+    container_name: eHealth_Insights_postgres_hospital1
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hospital1_eHealth_Insights
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_hospital1:/var/lib/postgresql/data
+      - ./db-init/hospital1/:/docker-entrypoint-initdb.d
+
+  hospital2:
+    image: postgres:15
+    container_name: eHealth_Insights_postgres_hospital2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hospital2_eHealth_Insights
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_hospital2:/var/lib/postgresql/data
+      - ./db-init/hospital2/:/docker-entrypoint-initdb.d
 
 volumes:
-  postgres_data:
+  postgres_private:
+  postgres_hospital1:
+  postgres_hospital2:

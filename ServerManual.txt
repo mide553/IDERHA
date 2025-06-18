@@ -1,9 +1,14 @@
-## 1. Start pgAdmin 4 Database ##
-## database = IDERHA
-## database port = 5432
-## username = postgres
-## password = postgres
+## 1. Compose Docker Database
+##  install docker https://docs.docker.com/get-started/get-docker/
+##  install docker-compose https://docs.docker.com/compose/install/
+##  navigate to IDERHA directory
+docker-compose up -d
 
+## Connect to docker using shell if needed
+
+docker exec -it eHealth_Insights_postgres_private psql -U postgres -d private_eHealth_Insights
+docker exec -it eHealth_Insights_postgres_public psql -U postgres -d public_eHealth_Insights
+docker exec -it eHealth_Insights_postgres_public_2 psql -U postgres -d public_eHealth_Insights_2
 
 ## 2. Start Backend Server ##
 
@@ -15,7 +20,7 @@ mvn spring-boot:run
 
 
 
-## 3. Start Frontend Server ##
+## 3. Start cd s Server ##
 
 cd react-app
 ## Check node.js and Node Package Manager if installed
@@ -27,3 +32,16 @@ npm run dev
 ## cd react-app
 ## npm install
 ## npm install -g vite
+
+
+
+## 4. Testing Frontend
+
+## Install vitest and jsdom packages for testing:
+cd react-app
+npm install vitest --save-dev
+npm install jsdom --save-dev
+
+## Run tests:
+cd react-app
+npm test
