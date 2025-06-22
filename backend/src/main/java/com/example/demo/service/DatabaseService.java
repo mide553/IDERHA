@@ -19,11 +19,6 @@ public class DatabaseService {
     @Qualifier("hospital2JdbcTemplate")
     private JdbcTemplate hospital2JdbcTemplate;
 
-    public List<Map<String, Object>> getTables() { // debugging --- delete later
-        String query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name";
-        return jdbcTemplate.queryForList(query);
-    }
-
     public List<Map<String, Object>> executeQuery(String query) {
         return hospital1JdbcTemplate.queryForList(query);
     }
