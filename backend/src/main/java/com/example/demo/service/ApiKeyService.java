@@ -148,7 +148,7 @@ public class ApiKeyService {
         String key = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
 
         // Add prefix for identification
-        return "iderha_" + key;
+        return "ehealth_" + key;
     }
 
     /**

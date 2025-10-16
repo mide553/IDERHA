@@ -172,7 +172,7 @@ const ApiDocumentation = () => {
                                                     id="keyName"
                                                     value={keyForm.keyName}
                                                     onChange={(e) => setKeyForm({ ...keyForm, keyName: e.target.value })}
-                                                    placeholder="e.g., City General API Key"
+                                                    placeholder="e.g., Vienna General Hospital API Key"
                                                 />
                                             </div>
                                             <div className="form-group">
@@ -393,7 +393,7 @@ except requests.exceptions.RequestException as e:
                                 <div className="step">
                                     <h5>Example use</h5>
                                     <pre className="code-block" dangerouslySetInnerHTML={{
-                                        __html: highlightCode(`your-api-key: iderha_YUMGqR2SaHEbVQCSo6NKusJpq0VE57UTJaxXeRR3Hpc
+                                        __html: highlightCode(`your-api-key: ehealth_YUMGqR2SaHEbVQCSo6NKusJpq0VE57UTJaxXeRR3Hpc
 your-file.sql: C:/Users/Admin/Desktop/data.sql`)
                                     }}>
                                     </pre>
@@ -476,22 +476,7 @@ timestamp            : Sun Oct 12 14:34:47 CEST 2025`}
                                         <tr>
                                             <td>POST</td>
                                             <td>/api/data/sql</td>
-                                            <td>Upload SQL files (recommended)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>POST</td>
-                                            <td>/api/data/patients</td>
-                                            <td>Upload patient data (JSON)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>POST</td>
-                                            <td>/api/data/conditions</td>
-                                            <td>Upload condition data (JSON)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>POST</td>
-                                            <td>/api/data/drugs</td>
-                                            <td>Upload drug exposure data (JSON)</td>
+                                            <td>Upload SQL files</td>
                                         </tr>
                                     </tbody>
                                 </table>
