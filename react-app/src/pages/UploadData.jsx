@@ -33,7 +33,7 @@ const UploadData = () => {
     };
 
     const getDatabaseDisplayName = (dbName) => {
-        switch(dbName) {
+        switch (dbName) {
             case 'hospital1': return 'Hospital 1 (Port 5433)';
             case 'hospital2': return 'Hospital 2 (Port 5434)';
             default: return 'Unknown Database';
@@ -46,7 +46,7 @@ const UploadData = () => {
             if (file.type === 'application/sql' || file.name.endsWith('.sql')) {
                 setSelectedFile(file);
                 setError(null);
-                
+
                 // Read file content for preview
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -79,10 +79,10 @@ const UploadData = () => {
         try {
             const formData = new FormData();
             formData.append('file', selectedFile);
-            
+
             // For hospital users, use their assigned database; for admin, use selected database
-            const targetDatabase = currentUser?.role === 'hospital' 
-                ? currentUser.assignedDatabase 
+            const targetDatabase = currentUser?.role === 'hospital'
+                ? currentUser.assignedDatabase
                 : selectedDatabase;
 
             formData.append('database', targetDatabase);
@@ -128,25 +128,24 @@ const UploadData = () => {
                         <p>Loading...</p>
                     ) : (
                         <>
-                            {currentUser && currentUser.role === 'hospital' && currentUser.assignedDatabase && (
-                                <div className="assigned-database">
-                                    <h3>Your Assigned Database:</h3>
-                                    <p><strong>{getDatabaseDisplayName(currentUser.assignedDatabase)}</strong></p>
-                                    <p>You can only upload data to this database.</p>
-                                </div>
-                            )}
-                            
-                            {currentUser && currentUser.role === 'hospital' && !currentUser.assignedDatabase && (
-                                <div className="no-database">
-                                    <p><strong>Warning:</strong> No database has been assigned to your account. Please contact an administrator.</p>
-                                </div>
-                            )}
-                            
-                            {currentUser && currentUser.role === 'admin' && (
-                                <div className="admin-access">
-                                    <p>As an admin, you have access to all databases.</p>
-                                    <div className="database-selector">
+                            <div className="upload-section">
+                                {currentUser && currentUser.role === 'hospital' && currentUser.assignedDatabase && (
+                                    <div>
+                                        <h3>Your Assigned Database:</h3>
+                                        <p><strong>{getDatabaseDisplayName(currentUser.assignedDatabase)}</strong></p>
+                                    </div>
+                                )}
+
+                                {currentUser && currentUser.role === 'hospital' && !currentUser.assignedDatabase && (
+                                    <div>
+                                        <p><strong>Warning:</strong> No database has been assigned to your account. Please contact an administrator.</p>
+                                    </div>
+                                )}
+
+                                {currentUser && currentUser.role === 'admin' && (
+                                    <div>
                                         <label htmlFor="admin-database-select">Select Target Database:</label>
+                                        <br /><br />
                                         <select
                                             id="admin-database-select"
                                             value={selectedDatabase}
@@ -156,12 +155,9 @@ const UploadData = () => {
                                             <option value="hospital2">Hospital 2 (Port 5434)</option>
                                         </select>
                                     </div>
-                                </div>
-                            )}
-
-                            <div className="upload-section">
+                                )}
                                 <h3>Upload SQL File</h3>
-                                <div className="file-input-section">
+                                <div className={`file-input-section ${selectedFile ? 'has-file' : ''}`}>
                                     <input
                                         id="fileInput"
                                         type="file"
@@ -170,10 +166,29 @@ const UploadData = () => {
                                         className="file-input"
                                     />
                                     <label htmlFor="fileInput" className="file-input-label">
-                                        Choose SQL File
+                                        {selectedFile ? 'Change SQL File' : 'Choose SQL File'}
                                     </label>
                                     {selectedFile && (
-                                        <span className="file-name">{selectedFile.name}</span>
+                                        <button
+                                            onClick={() => {
+                                                setSelectedFile(null);
+                                                setSqlContent('');
+                                                document.getElementById('fileInput').value = '';
+                                            }}
+                                            className="remove-file-button"
+                                        >
+                                            Remove SQL File
+                                        </button>
+                                    )}
+                                    {selectedFile && (
+                                        <div className="file-name">
+                                            {selectedFile.name}
+                                        </div>
+                                    )}
+                                    {!selectedFile && (
+                                        <p style={{ margin: '0.5rem 0 0 0', color: '#6c757d', fontSize: '0.9rem' }}>
+                                            Drag and drop or click to select a .sql file
+                                        </p>
                                     )}
                                 </div>
 
@@ -185,12 +200,12 @@ const UploadData = () => {
                                     </div>
                                 )}
 
-                                <button 
+                                <button
                                     onClick={handleUpload}
                                     disabled={!selectedFile || uploadLoading || (currentUser?.role === 'hospital' && !currentUser?.assignedDatabase)}
                                     className="upload-button"
                                 >
-                                    {uploadLoading ? 'Uploading...' : 'Upload and Execute SQL'}
+                                    {uploadLoading ? 'Uploading...' : 'Submit'}
                                 </button>
                             </div>
 
