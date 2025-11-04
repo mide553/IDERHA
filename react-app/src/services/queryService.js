@@ -7,10 +7,25 @@ export const queries = {
             sql: `SELECT COUNT(concept_id) FROM concept`,
             description: 'Get total number of concepts in the database'
         },
+        totalPersons: {
+            name: 'Total Patients',
+            sql: `SELECT COUNT(person_id) FROM person`,
+            description: 'Get total number of patients in the database'
+        },
         drugExposureCount: {
             name: 'Total Drug Exposures',
-            sql: `SELECT COUNT(person_id) FROM drug_exposure`,
+            sql: `SELECT COUNT(de.person_id) FROM drug_exposure de JOIN person p ON de.person_id = p.person_id`,
             description: 'Get total number of drug exposure records'
+        },
+        uniquePatientsWithDrugs: {
+            name: 'Unique Patients with Drug Exposure',
+            sql: `SELECT COUNT(DISTINCT de.person_id) FROM drug_exposure de JOIN person p ON de.person_id = p.person_id`,
+            description: 'Get unique patients who have been exposed to drugs'
+        },
+        uniqueDrugs: {
+            name: 'Unique Drugs',
+            sql: `SELECT COUNT(DISTINCT de.drug_concept_id) FROM drug_exposure de JOIN person p ON de.person_id = p.person_id`,
+            description: 'Get total number of unique drugs in drug exposure records'
         }
     },
 
@@ -35,27 +50,57 @@ export const queries = {
             name: 'Patient Drug Exposure Analysis',
             sql: `
                 SELECT
-                    COUNT(DISTINCT person_id) AS somepersons,
+                    COUNT(DISTINCT de.person_id) AS somepersons,
                     (SELECT COUNT(person_id) FROM person) AS fullperson,
                     CASE 
                         WHEN (SELECT COUNT(person_id) FROM person) = 0 THEN '0 %'
-                        ELSE ROUND((COUNT(DISTINCT person_id) * 100.0 / (SELECT COUNT(person_id) FROM person)), 3) || ' %'
+                        ELSE ROUND((COUNT(DISTINCT de.person_id) * 100.0 / (SELECT COUNT(person_id) FROM person)), 3) || ' %'
                     END AS percentage
-                FROM drug_exposure`,
+                FROM drug_exposure de
+                JOIN person p ON de.person_id = p.person_id`,
             description: 'Analyze what percentage of patients have drug exposures'
         },
         topConditions: {
             name: 'Top 10 Conditions',
             sql: `
                 SELECT
-                    condition_concept_id, concept_name,
+                    co.condition_concept_id, c.concept_name,
                     COUNT(*) AS condition_count
-                FROM condition_occurrence
-                JOIN concept ON concept_id = condition_concept_id
-                GROUP BY condition_concept_id, concept_name
+                FROM condition_occurrence co
+                JOIN person p ON co.person_id = p.person_id
+                JOIN concept c ON c.concept_id = co.condition_concept_id
+                GROUP BY co.condition_concept_id, c.concept_name
                 ORDER BY condition_count DESC
                 LIMIT 10`,
             description: 'Get the top 10 most common conditions'
+        },
+        conditionsOverTime: {
+            name: 'Top 10 Conditions Over Time',
+            sql: `
+                WITH overall_top_conditions AS (
+                    SELECT
+                        co.condition_concept_id,
+                        c.concept_name,
+                        COUNT(*) AS total_count
+                    FROM condition_occurrence co
+                    JOIN person p ON co.person_id = p.person_id
+                    JOIN concept c ON c.concept_id = co.condition_concept_id
+                    GROUP BY co.condition_concept_id, c.concept_name
+                    ORDER BY total_count DESC
+                    LIMIT 10
+                )
+                SELECT
+                    DATE_PART('year', oc.condition_start_date) AS year,
+                    oc.condition_concept_id,
+                    c.concept_name,
+                    COUNT(*) AS condition_count
+                FROM condition_occurrence oc
+                JOIN person p ON oc.person_id = p.person_id
+                JOIN concept c ON c.concept_id = oc.condition_concept_id
+                JOIN overall_top_conditions otc ON otc.condition_concept_id = oc.condition_concept_id
+                GROUP BY year, oc.condition_concept_id, c.concept_name
+                ORDER BY year, oc.condition_concept_id`,
+            description: 'Show how top 10 conditions trend over time'
         }
     },
 
@@ -78,6 +123,7 @@ export const queries = {
                     ROUND((COUNT(DISTINCT co.person_id) * 100.0 / 
                         NULLIF((SELECT COUNT(DISTINCT person_id) FROM person), 0)), 2) as percentage
                 FROM condition_occurrence co
+                JOIN person p ON co.person_id = p.person_id
                 JOIN diagnosed_condition c ON co.condition_concept_id = c.condition_concept_id
                 GROUP BY c.concept_name
                 ORDER BY conditioned_patients DESC`,
