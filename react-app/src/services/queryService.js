@@ -10,16 +10,91 @@ export const queries = {
         totalPersons: {
             name: 'Total Patients',
             sql: `SELECT COUNT(person_id) FROM person`,
+            sqlWithBreakdown: `
+                SELECT 
+                    CASE 
+                        WHEN gender_concept_id = 8507 THEN 'Male'
+                        WHEN gender_concept_id = 8532 THEN 'Female'
+                        ELSE 'Other'
+                    END as gender,
+                    COUNT(*) as count
+                FROM person
+                GROUP BY gender_concept_id`,
+            sqlWithAgeBreakdown: `
+                SELECT 
+                    CASE 
+                        WHEN year_of_birth <= EXTRACT(YEAR FROM CURRENT_DATE) - 18 THEN 'Adults (18+)'
+                        ELSE 'Children (<18)'
+                    END as age_group,
+                    COUNT(*) as count
+                FROM person
+                GROUP BY age_group`,
+            sqlWithCombinedBreakdown: `
+                SELECT 
+                    CASE 
+                        WHEN gender_concept_id = 8507 THEN 'Male'
+                        WHEN gender_concept_id = 8532 THEN 'Female'
+                        ELSE 'Other'
+                    END as gender,
+                    CASE 
+                        WHEN year_of_birth <= EXTRACT(YEAR FROM CURRENT_DATE) - 18 THEN 'Adults (18+)'
+                        ELSE 'Children (<18)'
+                    END as age_group,
+                    COUNT(*) as count
+                FROM person
+                GROUP BY gender_concept_id, age_group`,
             description: 'Get total number of patients in the database'
         },
         drugExposureCount: {
             name: 'Total Drug Exposures',
             sql: `SELECT COUNT(de.person_id) FROM drug_exposure de JOIN person p ON de.person_id = p.person_id`,
+            sqlWithBreakdown: `
+                SELECT 
+                    CASE 
+                        WHEN p.gender_concept_id = 8507 THEN 'Male'
+                        WHEN p.gender_concept_id = 8532 THEN 'Female'
+                        ELSE 'Other'
+                    END as gender,
+                    COUNT(*) as count
+                FROM drug_exposure de 
+                JOIN person p ON de.person_id = p.person_id
+                GROUP BY p.gender_concept_id`,
+            sqlWithAgeBreakdown: `
+                SELECT 
+                    CASE 
+                        WHEN p.year_of_birth <= EXTRACT(YEAR FROM CURRENT_DATE) - 18 THEN 'Adults (18+)'
+                        ELSE 'Children (<18)'
+                    END as age_group,
+                    COUNT(*) as count
+                FROM drug_exposure de 
+                JOIN person p ON de.person_id = p.person_id
+                GROUP BY age_group`,
             description: 'Get total number of drug exposure records'
         },
         uniquePatientsWithDrugs: {
             name: 'Unique Patients with Drug Exposure',
             sql: `SELECT COUNT(DISTINCT de.person_id) FROM drug_exposure de JOIN person p ON de.person_id = p.person_id`,
+            sqlWithBreakdown: `
+                SELECT 
+                    CASE 
+                        WHEN p.gender_concept_id = 8507 THEN 'Male'
+                        WHEN p.gender_concept_id = 8532 THEN 'Female'
+                        ELSE 'Other'
+                    END as gender,
+                    COUNT(DISTINCT de.person_id) as count
+                FROM drug_exposure de 
+                JOIN person p ON de.person_id = p.person_id
+                GROUP BY p.gender_concept_id`,
+            sqlWithAgeBreakdown: `
+                SELECT 
+                    CASE 
+                        WHEN p.year_of_birth <= EXTRACT(YEAR FROM CURRENT_DATE) - 18 THEN 'Adults (18+)'
+                        ELSE 'Children (<18)'
+                    END as age_group,
+                    COUNT(DISTINCT de.person_id) as count
+                FROM drug_exposure de 
+                JOIN person p ON de.person_id = p.person_id
+                GROUP BY age_group`,
             description: 'Get unique patients who have been exposed to drugs'
         },
         uniqueDrugs: {
