@@ -20,7 +20,7 @@ A healthcare data management platform for hospitals to store, analyze, and share
 
 ### What you need
 - [Docker and Docker Compose](https://docs.docker.com/get-started/get-docker/)
-- [Git with LFS support](https://git-lfs.github.io/) (included in Git for Windows)
+- [Git with LFS support](https://git-lfs.github.io/)
 - [Node.js](https://nodejs.org/) (for frontend)
 - [Maven](https://maven.apache.org/) (for backend)
 
@@ -75,12 +75,11 @@ npm run dev
 
 **Missing OMOP Concept SQL files?**
 ```bash
-`git lfs pull`
+git lfs pull
 ```
 
-**Database connection issues?** 
+**Database connection issues - Connect to databases directly?** 
 ```bash
-# Connect to databases directly
 docker exec -it eHealth_Insights_postgres_private psql -U postgres -d private_eHealth_Insights
 docker exec -it eHealth_Insights_postgres_hospital1 psql -U postgres -d hospital1_eHealth_Insights
 docker exec -it eHealth_Insights_postgres_hospital2 psql -U postgres -d hospital2_eHealth_Insights
