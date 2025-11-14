@@ -69,11 +69,14 @@ npm run dev
 4. **Open the app**
 - Frontend: http://localhost:3000
 - Login with admin credentials
+- In order to use the Analytics page - Wait 5-10 Minutes for databases to be populated with patient data
 
 ## Troubleshooting
 
-**Missing OMOP Concept SQL files?** 
-Run `git lfs pull`
+**Missing OMOP Concept SQL files?**
+```bash
+`git lfs pull`
+```
 
 **Database connection issues?** 
 ```bash
