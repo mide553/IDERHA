@@ -1,0 +1,2 @@
+db_setup/omop/*.sql filter=lfs diff=lfs merge=lfs -text
+patient_data/**/*.sql filter=lfs diff=lfs merge=lfs -text

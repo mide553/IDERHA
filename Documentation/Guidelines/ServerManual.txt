@@ -1,8 +1,12 @@
 ## 1. Compose Docker Database
 ##  install docker https://docs.docker.com/get-started/get-docker/
 ##  install docker-compose https://docs.docker.com/compose/install/
+##  install git with LFS support (included in Git for Windows)
 ##  navigate to IDERHA directory
 docker-compose up -d
+
+## If large SQL OMOP Concept files in /db_setup/omop (15 files in total) are missing after clone, run:
+git lfs pull
 
 ## Connect to docker using shell if needed
 

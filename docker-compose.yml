@@ -3,43 +3,51 @@ services:
     image: postgres:15
     container_name: eHealth_Insights_postgres_private
     restart: always
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: private_eHealth_Insights
     ports:
       - "5432:5432"
     volumes:
       - postgres_private:/var/lib/postgresql/data
-      - ./db-init/private/:/docker-entrypoint-initdb.d
+      - ./db_setup/private/:/docker-entrypoint-initdb.d
 
   hospital1:
     image: postgres:15
     container_name: eHealth_Insights_postgres_hospital1
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: hospital1_eHealth_Insights
     ports:
       - "5433:5432"
     volumes:
       - postgres_hospital1:/var/lib/postgresql/data
-      - ./db-init/hospital1/:/docker-entrypoint-initdb.d
+      - ./db_setup/omop/:/docker-entrypoint-initdb.d/
+      - ./patient_data/hospital1/1_persons.sql:/docker-entrypoint-initdb.d/16_persons.sql
+      - ./patient_data/hospital1/2_conditions.sql:/docker-entrypoint-initdb.d/17_conditions.sql
+      - ./patient_data/hospital1/3_drugs.sql:/docker-entrypoint-initdb.d/18_drugs.sql
 
   hospital2:
     image: postgres:15
     container_name: eHealth_Insights_postgres_hospital2
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: hospital2_eHealth_Insights
     ports:
       - "5434:5432"
     volumes:
       - postgres_hospital2:/var/lib/postgresql/data
-      - ./db-init/hospital2/:/docker-entrypoint-initdb.d
+      - ./db_setup/omop/:/docker-entrypoint-initdb.d/
+      - ./patient_data/hospital2/1_persons.sql:/docker-entrypoint-initdb.d/16_persons.sql
+      - ./patient_data/hospital2/2_conditions.sql:/docker-entrypoint-initdb.d/17_conditions.sql
+      - ./patient_data/hospital2/3_drugs.sql:/docker-entrypoint-initdb.d/18_drugs.sql
 
 volumes:
   postgres_private:
