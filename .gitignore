@@ -28,3 +28,6 @@ logs/
 db_setup/omop/16_persons.sql
 db_setup/omop/17_conditions.sql
 db_setup/omop/18_drugs.sql
+
+#OHDSI Folder - Official GitHub Repository of OMOP CDM
+OHDSI
