@@ -50,6 +50,13 @@ ADMIN_LASTNAME=Admin
 # Start databases
 docker-compose up -d
 
+# Wait until databases are populated with patient data
+# Check with command:
+docker logs eHealth_Insights_postgres_hospital1 --tail 3
+
+# After verifying that databases are populated and ready, run FDW setup:
+.\setup-fdw.ps1
+
 # Start backend (in new terminal)
 cd backend
 # Check if Maven is installed

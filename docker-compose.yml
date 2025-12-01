@@ -14,6 +14,9 @@ services:
     volumes:
       - postgres_private:/var/lib/postgresql/data
       - ./db_setup/private/:/docker-entrypoint-initdb.d
+    depends_on:
+      - hospital1
+      - hospital2
 
   hospital1:
     image: postgres:15
@@ -31,6 +34,8 @@ services:
       - ./patient_data/hospital1/1_persons.sql:/docker-entrypoint-initdb.d/16_persons.sql
       - ./patient_data/hospital1/2_conditions.sql:/docker-entrypoint-initdb.d/17_conditions.sql
       - ./patient_data/hospital1/3_drugs.sql:/docker-entrypoint-initdb.d/18_drugs.sql
+      - ./patient_data/hospital1/4_visits.sql:/docker-entrypoint-initdb.d/19_visits.sql
+      - ./patient_data/hospital1/5_observations.sql:/docker-entrypoint-initdb.d/20_observations.sql
 
   hospital2:
     image: postgres:15
@@ -48,6 +53,8 @@ services:
       - ./patient_data/hospital2/1_persons.sql:/docker-entrypoint-initdb.d/16_persons.sql
       - ./patient_data/hospital2/2_conditions.sql:/docker-entrypoint-initdb.d/17_conditions.sql
       - ./patient_data/hospital2/3_drugs.sql:/docker-entrypoint-initdb.d/18_drugs.sql
+      - ./patient_data/hospital2/4_visits.sql:/docker-entrypoint-initdb.d/19_visits.sql
+      - ./patient_data/hospital2/5_observations.sql:/docker-entrypoint-initdb.d/20_observations.sql
 
 volumes:
   postgres_private:

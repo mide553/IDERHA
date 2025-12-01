@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import '../css/Analytics.css';
-import { queries, executeQuery, canAccessDatabase } from '../services/queryService';
+import { queries, executeQuery, checkUnifiedViews } from '../services/queryService';
 import {
     BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    AreaChart, Area, ScatterChart, Scatter, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ComposedChart,
+    AreaChart, Area, ScatterChart, Scatter, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ComposedChart,
     Treemap, FunnelChart, Funnel, LabelList
 } from 'recharts';
 
@@ -13,7 +13,8 @@ const Analytics = () => {
     const [error, setError] = useState(null);
     const [activeCategory, setActiveCategory] = useState('demographics');
     const [currentQueryName, setCurrentQueryName] = useState('');
-    const [selectedDatabase, setSelectedDatabase] = useState('hospital1');
+    const [selectedDatabase, setSelectedDatabase] = useState('unified'); // Default to unified FDW queries
+    const [fdwAvailable, setFdwAvailable] = useState(false);
     const [chartType, setChartType] = useState('auto');
     const [filters, setFilters] = useState({
         ageGroup: 'all',
@@ -36,6 +37,14 @@ const Analytics = () => {
         const history = localStorage.getItem('queryHistory');
         if (saved) setSavedQueries(JSON.parse(saved));
         if (history) setQueryHistory(JSON.parse(history));
+
+        // Check if FDW is available
+        checkUnifiedViews().then(views => {
+            setFdwAvailable(views.length > 0);
+            if (views.length === 0) {
+                console.warn('FDW not available. Run setup-fdw.ps1 to enable cross-hospital queries.');
+            }
+        });
     }, []);
 
     // Save query to history
@@ -210,45 +219,19 @@ const Analytics = () => {
             // Determine which SQL to use
             let sqlToUse = queryObj.sql;
 
-            // For demographics with breakdown queries available
-            if (activeCategory === 'demographics' && (queryObj.sqlWithBreakdown || queryObj.sqlWithAgeBreakdown)) {
-                const hasAgeFilter = filters.ageGroup !== 'all';
-                const hasGenderFilter = filters.gender !== 'all';
+            // Use unified queries when database is set to 'unified' or 'both'
+            const useUnified = queryObj.useUnified || selectedDatabase === 'unified' || selectedDatabase === 'both';
 
-                if (hasGenderFilter && hasAgeFilter && queryObj.sqlWithCombinedBreakdown) {
-                    sqlToUse = queryObj.sqlWithCombinedBreakdown;
-                } else if (hasGenderFilter && queryObj.sqlWithBreakdown) {
-                    sqlToUse = queryObj.sqlWithBreakdown;
-                } else if (hasAgeFilter && queryObj.sqlWithAgeBreakdown) {
-                    sqlToUse = queryObj.sqlWithAgeBreakdown;
-                } else {
-                    sqlToUse = queryObj.sql;
-                }
-            }
-
-            // Apply filters only if query supports it
-            const filteredSql = isQueryFilterable(queryObj) ? applyFiltersToSql(sqlToUse) : sqlToUse;
-
-            // Execute query
-            if (selectedDatabase === 'both') {
-                const [data1, data2] = await Promise.all([
-                    executeQuery(filteredSql, 'hospital1'),
-                    executeQuery(filteredSql, 'hospital2')
-                ]);
-
-                const mergedData = mergeDatabaseResults(data1, data2);
-                setQueryResult(mergedData);
-            } else {
-                const data = await executeQuery(filteredSql, selectedDatabase);
-                setQueryResult(data);
-            }
+            // Execute query with FDW support
+            const data = await executeQuery(sqlToUse, selectedDatabase, useUnified);
+            setQueryResult(data);
 
             // Add to history
             addToHistory(queryObj);
 
         } catch (err) {
             setError(err.message);
-            console.error('Error executing PostgreSQL query:', err);
+            console.error('Error executing query:', err);
         } finally {
             setLoading(false);
         }
@@ -298,9 +281,9 @@ const Analytics = () => {
             switch (actualChartType) {
                 case 'pie':
                     // Pie chart logic for various data structures
-                    if (firstRow.gender || firstRow.age_group || firstRow.visit_type || firstRow.condition_type || firstRow.specialty || firstRow.drug_class || firstRow.category || firstRow.metric || firstRow.age_outcome || firstRow.complexity_level || firstRow.intervention_type || firstRow.patient_type) {
+                    if (firstRow.gender || firstRow.age_group || firstRow.visit_type || firstRow.type || firstRow.condition_type || firstRow.specialty || firstRow.drug_class || firstRow.category || firstRow.metric || firstRow.age_outcome || firstRow.complexity_level || firstRow.intervention_type || firstRow.patient_type) {
                         const pieData = data.map(row => ({
-                            name: row.gender || row.age_group || row.visit_type || row.condition_type || row.specialty || row.drug_class || row.category || row.metric || row.age_outcome || row.complexity_level || row.intervention_type || row.patient_type,
+                            name: row.gender || row.age_group || row.visit_type || row.type || row.condition_type || row.specialty || row.drug_class || row.category || row.metric || row.age_outcome || row.complexity_level || row.intervention_type || row.patient_type,
                             value: parseInt(row.count || row.patient_count || row.unique_patients || row.total_visits || row.visit_count || row.total_count || row.count_value || row.intervention_count || row.utilization_count)
                         }));
 
@@ -429,7 +412,9 @@ const Analytics = () => {
                             </ResponsiveContainer>
                         );
                     }
-                    break; case 'line':
+                    break;
+
+                case 'line':
                     // Enhanced line chart for time series
                     if (firstRow.month) {
                         chartComponent = (
@@ -568,14 +553,46 @@ const Analytics = () => {
                                 <PolarRadiusAxis />
                                 <Tooltip />
                                 <Legend />
-                                <Radar
-                                    name="Patient Count"
-                                    dataKey="patient_count"
-                                    stroke="#8884d8"
-                                    fill="#8884d8"
-                                    fillOpacity={0.3}
-                                    strokeWidth={2}
-                                />
+                                {firstRow.chronic_count && (
+                                    <Radar
+                                        name="Chronic Conditions"
+                                        dataKey="chronic_count"
+                                        stroke="#ff6b6b"
+                                        fill="#ff6b6b"
+                                        fillOpacity={0.5}
+                                        strokeWidth={2}
+                                    />
+                                )}
+                                {firstRow.acute_count && (
+                                    <Radar
+                                        name="Acute Conditions"
+                                        dataKey="acute_count"
+                                        stroke="#4ecdc4"
+                                        fill="#4ecdc4"
+                                        fillOpacity={0.5}
+                                        strokeWidth={2}
+                                    />
+                                )}
+                                {firstRow.patient_count && !firstRow.chronic_count && (
+                                    <Radar
+                                        name="Patient Count"
+                                        dataKey="patient_count"
+                                        stroke="#8884d8"
+                                        fill="#8884d8"
+                                        fillOpacity={0.3}
+                                        strokeWidth={2}
+                                    />
+                                )}
+                                {firstRow.avg_medications && (
+                                    <Radar
+                                        name="Avg Medications"
+                                        dataKey="avg_medications"
+                                        stroke="#ff7300"
+                                        fill="#ff7300"
+                                        fillOpacity={0.3}
+                                        strokeWidth={2}
+                                    />
+                                )}
                                 {firstRow.emergency_visits && (
                                     <Radar
                                         name="Emergency Visits"
@@ -595,23 +612,37 @@ const Analytics = () => {
                     // Composed chart for mixed data types
                     chartComponent = (
                         <ResponsiveContainer width="100%" height={400}>
-                            <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                            <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey={Object.keys(firstRow)[0]} />
-                                <YAxis />
+                                <XAxis
+                                    dataKey={Object.keys(firstRow)[0]}
+                                    angle={-45}
+                                    textAnchor="end"
+                                    height={80}
+                                />
+                                <YAxis yAxisId="left" label={{ value: 'Patient Count', angle: -90, position: 'insideLeft' }} />
+                                {firstRow.avg_medications && (
+                                    <YAxis yAxisId="right" orientation="right" label={{ value: 'Avg Medications', angle: 90, position: 'insideRight' }} />
+                                )}
                                 <Tooltip />
                                 <Legend />
+                                {firstRow.patient_count && !firstRow.male_count && (
+                                    <Bar yAxisId="left" dataKey="patient_count" fill="#8884d8" name="Patients" />
+                                )}
                                 {firstRow.male_count && (
-                                    <Bar dataKey="male_count" fill="#8884d8" name="Male" />
+                                    <Bar yAxisId="left" dataKey="male_count" fill="#8884d8" name="Male" />
                                 )}
                                 {firstRow.female_count && (
-                                    <Bar dataKey="female_count" fill="#82ca9d" name="Female" />
+                                    <Bar yAxisId="left" dataKey="female_count" fill="#82ca9d" name="Female" />
+                                )}
+                                {firstRow.avg_medications && (
+                                    <Line yAxisId="right" type="monotone" dataKey="avg_medications" stroke="#ff7300" strokeWidth={3} name="Avg Medications" dot={{ r: 5 }} />
                                 )}
                                 {firstRow.diagnostic_count && (
-                                    <Bar dataKey="diagnostic_count" fill="#8884d8" name="Diagnostic" />
+                                    <Bar yAxisId="left" dataKey="diagnostic_count" fill="#8884d8" name="Diagnostic" />
                                 )}
                                 {firstRow.therapeutic_count && (
-                                    <Line type="monotone" dataKey="therapeutic_count" stroke="#ff7300" name="Therapeutic" />
+                                    <Line yAxisId="left" type="monotone" dataKey="therapeutic_count" stroke="#ff7300" name="Therapeutic" />
                                 )}
                             </ComposedChart>
                         </ResponsiveContainer>
@@ -631,7 +662,7 @@ const Analytics = () => {
                             <Treemap
                                 data={treemapData}
                                 dataKey="size"
-                                ratio={4/3}
+                                ratio={4 / 3}
                                 stroke="#fff"
                                 fill="#8884d8"
                             >
@@ -754,10 +785,15 @@ const Analytics = () => {
                                     setError(null);
                                 }}
                             >
-                                <option value="hospital1">Hospital 1</option>
-                                <option value="hospital2">Hospital 2</option>
-                                <option value="both">Both (Combined)</option>
+                                <option value="unified">All Hospitals (Unified FDW)</option>
+                                <option value="hospital1">Hospital 1 Only</option>
+                                <option value="hospital2">Hospital 2 Only</option>
                             </select>
+                            {!fdwAvailable && selectedDatabase === 'unified' && (
+                                <small style={{ color: 'orange', display: 'block', marginTop: '5px' }}>
+                                    ⚠️ FDW not set up. Run setup-fdw.ps1
+                                </small>
+                            )}
                         </div>
 
                         {/* Query Categories and Queries */}
