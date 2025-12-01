@@ -128,6 +128,7 @@ const UploadData = () => {
                         <p>Loading...</p>
                     ) : (
                         <>
+                            <h2>Upload SQL File</h2>
                             <div className="upload-section">
                                 {currentUser && currentUser.role === 'hospital' && currentUser.assignedDatabase && (
                                     <div>
@@ -156,7 +157,7 @@ const UploadData = () => {
                                         </select>
                                     </div>
                                 )}
-                                <h3>Upload SQL File</h3>
+
                                 <div className={`file-input-section ${selectedFile ? 'has-file' : ''}`}>
                                     <input
                                         id="fileInput"

@@ -6,20 +6,24 @@
     min-height: 100vh;
     font-family: 'Montserrat', sans-serif;
     background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Sidebar Styles */
 .analytics-sidebar {
     width: 350px;
     background-color: #ffffff;
-    border-right: 1px solid #e9ecef;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
     transition: all 0.3s ease;
     position: relative;
     z-index: 100;
     display: flex;
     flex-direction: column;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-right: 1px solid #e9ecef;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .analytics-sidebar.collapsed {

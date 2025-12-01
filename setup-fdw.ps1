@@ -1,43 +1,93 @@
 # Setup Foreign Data Wrapper
-# This creates FDW ONLY between hospital databases - private DB stays isolated for security
-# Run this script to enable cross-hospital queries
+# 1. Connects Hospital DBs to Vocab DB (for concepts)
+# 2. Connects Hospital1 to Hospital2 (for unified patient data views)
 
-Write-Host "Setting up Foreign Data Wrapper (Hospital1 -> Hospital2)..." -ForegroundColor Green
-Write-Host "Note: Private database will remain isolated for security" -ForegroundColor Yellow
+Write-Host "Setting up Foreign Data Wrapper..." -ForegroundColor Green
 
-$sqlScript = @'
--- Enable the postgres_fdw extension
+# SQL to connect a hospital DB to Vocab DB
+$vocabFdwScript = @'
+-- Enable extension
 CREATE EXTENSION IF NOT EXISTS postgres_fdw;
 
--- Create foreign server for hospital2 database
-DROP SERVER IF EXISTS hospital2_server CASCADE;
+-- Create server for vocab database
+DROP SERVER IF EXISTS vocab_server CASCADE;
+CREATE SERVER vocab_server
+    FOREIGN DATA WRAPPER postgres_fdw
+    OPTIONS (host 'vocab', port '5432', dbname 'vocab_eHealth_Insights');
 
+-- User mapping
+DROP USER MAPPING IF EXISTS FOR postgres SERVER vocab_server;
+CREATE USER MAPPING FOR postgres
+    SERVER vocab_server
+    OPTIONS (user 'postgres', password 'password');
+
+-- Schema
+DROP SCHEMA IF EXISTS vocab_fdw CASCADE;
+CREATE SCHEMA vocab_fdw;
+
+-- Import tables
+IMPORT FOREIGN SCHEMA public
+    FROM SERVER vocab_server
+    INTO vocab_fdw;
+
+-- Create local views for vocab tables so they appear as if they are local
+CREATE OR REPLACE VIEW public.concept AS SELECT * FROM vocab_fdw.concept;
+CREATE OR REPLACE VIEW public.vocabulary AS SELECT * FROM vocab_fdw.vocabulary;
+CREATE OR REPLACE VIEW public.domain AS SELECT * FROM vocab_fdw.domain;
+CREATE OR REPLACE VIEW public.concept_class AS SELECT * FROM vocab_fdw.concept_class;
+CREATE OR REPLACE VIEW public.concept_relationship AS SELECT * FROM vocab_fdw.concept_relationship;
+CREATE OR REPLACE VIEW public.relationship AS SELECT * FROM vocab_fdw.relationship;
+CREATE OR REPLACE VIEW public.concept_synonym AS SELECT * FROM vocab_fdw.concept_synonym;
+CREATE OR REPLACE VIEW public.concept_ancestor AS SELECT * FROM vocab_fdw.concept_ancestor;
+CREATE OR REPLACE VIEW public.source_to_concept_map AS SELECT * FROM vocab_fdw.source_to_concept_map;
+CREATE OR REPLACE VIEW public.drug_strength AS SELECT * FROM vocab_fdw.drug_strength;
+
+GRANT USAGE ON SCHEMA vocab_fdw TO postgres;
+GRANT SELECT ON ALL TABLES IN SCHEMA vocab_fdw TO postgres;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO postgres;
+'@
+
+# Run on Hospital 1
+Write-Host "Connecting Hospital1 to Vocab..."
+$vocabFdwScript | docker exec -i eHealth_Insights_postgres_hospital1 psql -U postgres -d hospital1_eHealth_Insights
+if ($LASTEXITCODE -ne 0) { Write-Error "Failed to connect Hospital1 to Vocab. Ensure 'vocab' container is fully initialized." }
+
+# Run on Hospital 2
+Write-Host "Connecting Hospital2 to Vocab..."
+$vocabFdwScript | docker exec -i eHealth_Insights_postgres_hospital2 psql -U postgres -d hospital2_eHealth_Insights
+if ($LASTEXITCODE -ne 0) { Write-Error "Failed to connect Hospital2 to Vocab." }
+
+
+# SQL to connect Hospital1 to Hospital2 (Unified Views)
+$hospitalFdwScript = @'
+-- Enable extension
+CREATE EXTENSION IF NOT EXISTS postgres_fdw;
+
+-- Create server for hospital2
+DROP SERVER IF EXISTS hospital2_server CASCADE;
 CREATE SERVER hospital2_server
     FOREIGN DATA WRAPPER postgres_fdw
     OPTIONS (host 'hospital2', port '5432', dbname 'hospital2_eHealth_Insights');
 
--- Create user mapping
+-- User mapping
 DROP USER MAPPING IF EXISTS FOR postgres SERVER hospital2_server;
-
 CREATE USER MAPPING FOR postgres
     SERVER hospital2_server
     OPTIONS (user 'postgres', password 'password');
 
--- Create schema to organize foreign tables
+-- Schema
 DROP SCHEMA IF EXISTS hospital2_fdw CASCADE;
-
 CREATE SCHEMA hospital2_fdw;
 
--- Import all tables from hospital2 database
+-- Import tables
 IMPORT FOREIGN SCHEMA public
     FROM SERVER hospital2_server
     INTO hospital2_fdw;
 
--- Grant access
 GRANT USAGE ON SCHEMA hospital2_fdw TO postgres;
 GRANT SELECT ON ALL TABLES IN SCHEMA hospital2_fdw TO postgres;
 
--- Create unified views (hospital1 local data + hospital2 foreign data)
+-- Unified Views
 CREATE OR REPLACE VIEW unified_person AS
 SELECT 'hospital1' as source_hospital, * FROM public.person
 UNION ALL
@@ -73,36 +123,14 @@ SELECT 'hospital1' as source_hospital, * FROM public.measurement
 UNION ALL
 SELECT 'hospital2' as source_hospital, * FROM hospital2_fdw.measurement;
 
-CREATE OR REPLACE VIEW unified_concept AS
-SELECT DISTINCT ON (concept_id) * FROM public.concept;
+-- Unified Concept Views (just pass through the local view which points to vocab)
+CREATE OR REPLACE VIEW unified_concept AS SELECT * FROM public.concept;
+CREATE OR REPLACE VIEW unified_concept_relationship AS SELECT * FROM public.concept_relationship;
 
-CREATE OR REPLACE VIEW unified_concept_relationship AS
-SELECT DISTINCT ON (concept_id_1, concept_id_2, relationship_id) * 
-FROM public.concept_relationship;
-
--- Grant access to views
-GRANT SELECT ON unified_person TO postgres;
-GRANT SELECT ON unified_condition_occurrence TO postgres;
-GRANT SELECT ON unified_drug_exposure TO postgres;
-GRANT SELECT ON unified_observation TO postgres;
-GRANT SELECT ON unified_visit_occurrence TO postgres;
-GRANT SELECT ON unified_procedure_occurrence TO postgres;
-GRANT SELECT ON unified_measurement TO postgres;
-GRANT SELECT ON unified_concept TO postgres;
-GRANT SELECT ON unified_concept_relationship TO postgres;
-
-\echo 'Foreign Data Wrapper setup completed successfully!'
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO postgres;
 '@
 
-# Execute the FDW setup script in hospital1 database container (NOT private!)
-$sqlScript | docker exec -i eHealth_Insights_postgres_hospital1 psql -U postgres -d hospital1_eHealth_Insights
+Write-Host "Connecting Hospital1 to Hospital2..."
+$hospitalFdwScript | docker exec -i eHealth_Insights_postgres_hospital1 psql -U postgres -d hospital1_eHealth_Insights
 
-if ($LASTEXITCODE -eq 0) {
-    Write-Host ""
-    Write-Host "FDW Setup Complete!" -ForegroundColor Green
-    Write-Host ""
-} else {
-    Write-Host ""
-    Write-Host "FDW Setup Failed!" -ForegroundColor Red
-    Write-Host "Make sure all Docker containers are running." -ForegroundColor Yellow
-}
+Write-Host "FDW Setup Complete!"

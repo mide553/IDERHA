@@ -25,11 +25,10 @@ logs/
 *.sqlite
 
 # Docker volume mount points
-db_setup/omop/16_persons.sql
-db_setup/omop/17_conditions.sql
-db_setup/omop/18_drugs.sql
-db_setup/omop/19_visits.sql
-db_setup/omop/20_observations.sql
-
+db_setup/clinical/16_persons.sql
+db_setup/clinical/17_conditions.sql
+db_setup/clinical/18_drugs.sql
+db_setup/clinical/19_visits.sql
+db_setup/clinical/20_observations.sql
 #OHDSI Folder - Official GitHub Repository of OMOP CDM
 OHDSI
