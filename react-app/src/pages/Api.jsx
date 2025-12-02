@@ -34,7 +34,7 @@ const ApiDocumentation = () => {
 
     const getCurrentUser = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/check-session', {
+            const response = await fetch('/api/users/check-session', {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -50,7 +50,7 @@ const ApiDocumentation = () => {
 
     const loadApiKeys = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/api-keys', {
+            const response = await fetch('/api/admin/api-keys', {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -81,7 +81,7 @@ const ApiDocumentation = () => {
                 hospitalId: autoHospitalId
             };
 
-            const response = await fetch('http://localhost:8080/api/admin/api-keys/generate', {
+            const response = await fetch('/api/admin/api-keys/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ const ApiDocumentation = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/api-keys/deactivate-by-id`, {
+            const response = await fetch(`/api/admin/api-keys/deactivate-by-id`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -290,7 +290,7 @@ const ApiDocumentation = () => {
                                     <div className="example-response">
                                         <h4>Command Line (curl)</h4>
                                         <pre className="code-block" dangerouslySetInnerHTML={{
-                                            __html: highlightCode(`curl -X POST "http://localhost:8080/api/data/sql" \\
+                                            __html: highlightCode(`curl -X POST "http://<your-server-ip>:8080/api/data/sql" \\
   -H "X-API-Key: your-api-key" \\
   -H "Content-Type: text/plain" \\
   --data-binary @your-file.sql \\
@@ -308,7 +308,7 @@ $sqlContent = Get-Content "your-file.sql" -Raw
 $headers = @{ "X-API-Key" = $apiKey; "Content-Type" = "text/plain" }
 
 try {
-    $response = Invoke-RestMethod -Uri "http://localhost:8080/api/data/sql" -Method POST -Body $sqlContent -Headers $headers
+    $response = Invoke-RestMethod -Uri "http://<your-server-ip>:8080/api/data/sql" -Method POST -Body $sqlContent -Headers $headers
     
     # Success - show results
     Write-Host "Upload successful!" -ForegroundColor Green
@@ -353,7 +353,7 @@ try:
     }
 
     response = requests.post(
-        'http://localhost:8080/api/data/sql',
+        'http://<your-server-ip>:8080/api/data/sql',
         headers=headers,
         data=sql_content
     )

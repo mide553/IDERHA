@@ -7,7 +7,7 @@ const Header = ({ isSignedIn, setIsSignedIn, userRole }) => {
 
     const handleSignOut = async () => {
         try {
-            await fetch('http://localhost:8080/api/users/logout', {
+            await fetch('/api/users/logout', {
                 method: 'POST',
                 credentials: 'include',
             });

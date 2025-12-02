@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children, allowedRoles = [], fallbackMessage = "Access
 
     const checkUserSession = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/check-session', {
+            const response = await fetch('/api/users/check-session', {
                 method: 'GET',
                 credentials: 'include',
             });

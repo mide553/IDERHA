@@ -18,7 +18,7 @@ const UploadData = () => {
 
     const getCurrentUser = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/check-session', {
+            const response = await fetch('/api/users/check-session', {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -87,7 +87,7 @@ const UploadData = () => {
 
             formData.append('database', targetDatabase);
 
-            const response = await fetch('http://localhost:8080/api/upload/sql', {
+            const response = await fetch('/api/upload/sql', {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',

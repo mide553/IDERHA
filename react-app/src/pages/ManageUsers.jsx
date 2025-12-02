@@ -15,7 +15,7 @@ const ManageUsers = () => {
         getCurrentUserRole();
     }, []); const getCurrentUserRole = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/check-session', {
+            const response = await fetch('/api/users/check-session', {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -28,7 +28,7 @@ const ManageUsers = () => {
         }
     }; const fetchUsers = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/admin/users', {
+            const response = await fetch('/api/users/admin/users', {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -44,7 +44,7 @@ const ManageUsers = () => {
         }
     }; const handleAddUser = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/admin/users', {
+            const response = await fetch('/api/users/admin/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -62,7 +62,7 @@ const ManageUsers = () => {
         }
     }; const handleEditUser = async (user) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/users/admin/users/${originalEmail}`, {
+            const response = await fetch(`/api/users/admin/users/${originalEmail}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -88,7 +88,7 @@ const ManageUsers = () => {
         }
     }; const handleDeleteUser = async (email) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/users/admin/users/${email}`, {
+            const response = await fetch(`/api/users/admin/users/${email}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

@@ -24,7 +24,7 @@ const App = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/users/check-session', {
+        const response = await fetch('/api/users/check-session', {
           credentials: 'include',
         });
         const data = await response.json();

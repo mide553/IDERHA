@@ -111,6 +111,10 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    environment:
+      - PRIVATE_DB_URL=jdbc:postgresql://private:5432/private_eHealth_Insights
+      - HOSPITAL1_DB_URL=jdbc:postgresql://hospital1:5432/hospital1_eHealth_Insights
+      - HOSPITAL2_DB_URL=jdbc:postgresql://hospital2:5432/hospital2_eHealth_Insights
     mem_limit: 1024m
     tmpfs:
       - /tmp
