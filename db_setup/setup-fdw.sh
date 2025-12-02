@@ -174,7 +174,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO postgres;
 EOF
 
 echo "=================================================="
-echo "SETUP COMPLETE! The application is ready to use."
+echo "SETUP COMPLETE!"
 echo "Frontend: http://localhost:3000"
 echo "Backend: http://localhost:8080"
 echo "=================================================="

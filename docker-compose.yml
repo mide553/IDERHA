@@ -3,6 +3,8 @@ services:
     image: postgres:15
     container_name: eHealth_Insights_postgres_vocab
     restart: always
+    mem_limit: 4096m
+    command: postgres -c shared_buffers=256MB -c maintenance_work_mem=256MB
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -22,6 +24,8 @@ services:
     image: postgres:15
     container_name: eHealth_Insights_postgres_private
     restart: always
+    mem_limit: 512m
+    command: postgres -c shared_buffers=128MB
     env_file:
       - .env
     environment:
@@ -47,6 +51,8 @@ services:
     image: postgres:15
     container_name: eHealth_Insights_postgres_hospital1
     restart: always
+    mem_limit: 512m
+    command: postgres -c shared_buffers=128MB
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -73,6 +79,8 @@ services:
     image: postgres:15
     container_name: eHealth_Insights_postgres_hospital2
     restart: always
+    mem_limit: 512m
+    command: postgres -c shared_buffers=128MB
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -103,6 +111,7 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    mem_limit: 1024m
     tmpfs:
       - /tmp
     depends_on:
