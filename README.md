@@ -74,8 +74,7 @@ spring.jpa.hibernate.ddl-auto=none
   ```
 - **Linux/Mac**:
   ```bash
-  chmod +x start-app.sh
-  ./start-app.sh
+  bash start-app.sh
   ```
 *(This automatically starts the app, waits for the database setup to finish, and cleans up the setup container.)*
 
