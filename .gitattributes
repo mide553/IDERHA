@@ -1,0 +1,4 @@
+db_setup/vocab/**/*.sql filter=lfs diff=lfs merge=lfs -text
+db_setup/clinical/*.sql filter=lfs diff=lfs merge=lfs -text
+patient_data/**/*.sql filter=lfs diff=lfs merge=lfs -text
+db_setup/vocab/data/*.csv filter=lfs diff=lfs merge=lfs -text

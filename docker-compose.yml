@@ -1,47 +1,157 @@
 services:
+  vocab:
+    image: postgres:15
+    container_name: eHealth_Insights_postgres_vocab
+    restart: always
+    mem_limit: 4096m
+    command: postgres -c shared_buffers=256MB -c maintenance_work_mem=256MB
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: vocab_eHealth_Insights
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_vocab:/var/lib/postgresql/data
+      - ./db_setup/vocab/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   private:
     image: postgres:15
     container_name: eHealth_Insights_postgres_private
     restart: always
+    mem_limit: 512m
+    command: postgres -c shared_buffers=128MB
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: private_eHealth_Insights
     ports:
       - "5432:5432"
     volumes:
       - postgres_private:/var/lib/postgresql/data
-      - ./db-init/private/:/docker-entrypoint-initdb.d
+      - ./db_setup/private/:/docker-entrypoint-initdb.d
+    depends_on:
+      - hospital1
+      - hospital2
+      - vocab
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   hospital1:
     image: postgres:15
     container_name: eHealth_Insights_postgres_hospital1
     restart: always
+    mem_limit: 512m
+    command: postgres -c shared_buffers=128MB
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: hospital1_eHealth_Insights
     ports:
       - "5433:5432"
     volumes:
       - postgres_hospital1:/var/lib/postgresql/data
-      - ./db-init/hospital1/:/docker-entrypoint-initdb.d
+      - ./db_setup/clinical/:/docker-entrypoint-initdb.d/
+      - ./patient_data/hospital1/1_persons.sql:/docker-entrypoint-initdb.d/16_persons.sql
+      - ./patient_data/hospital1/2_conditions.sql:/docker-entrypoint-initdb.d/17_conditions.sql
+      - ./patient_data/hospital1/3_drugs.sql:/docker-entrypoint-initdb.d/18_drugs.sql
+      - ./patient_data/hospital1/4_visits.sql:/docker-entrypoint-initdb.d/19_visits.sql
+      - ./patient_data/hospital1/5_observations.sql:/docker-entrypoint-initdb.d/20_observations.sql
+    depends_on:
+      - vocab
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   hospital2:
     image: postgres:15
     container_name: eHealth_Insights_postgres_hospital2
     restart: always
+    mem_limit: 512m
+    command: postgres -c shared_buffers=128MB
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: hospital2_eHealth_Insights
     ports:
       - "5434:5432"
     volumes:
       - postgres_hospital2:/var/lib/postgresql/data
-      - ./db-init/hospital2/:/docker-entrypoint-initdb.d
+      - ./db_setup/clinical/:/docker-entrypoint-initdb.d/
+      - ./patient_data/hospital2/1_persons.sql:/docker-entrypoint-initdb.d/16_persons.sql
+      - ./patient_data/hospital2/2_conditions.sql:/docker-entrypoint-initdb.d/17_conditions.sql
+      - ./patient_data/hospital2/3_drugs.sql:/docker-entrypoint-initdb.d/18_drugs.sql
+      - ./patient_data/hospital2/4_visits.sql:/docker-entrypoint-initdb.d/19_visits.sql
+      - ./patient_data/hospital2/5_observations.sql:/docker-entrypoint-initdb.d/20_observations.sql
+    depends_on:
+      - vocab
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: eHealth_Insights_backend
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    mem_limit: 1024m
+    tmpfs:
+      - /tmp
+    depends_on:
+      private:
+        condition: service_healthy
+      hospital1:
+        condition: service_healthy
+      hospital2:
+        condition: service_healthy
+
+  frontend:
+    build: ./react-app
+    container_name: eHealth_Insights_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  setup:
+    image: postgres:15
+    container_name: eHealth_Insights_setup
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - ./db_setup/setup-fdw.sh:/setup-fdw.sh
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: ["bash", "/setup-fdw.sh"]
+    depends_on:
+      vocab:
+        condition: service_healthy
+      hospital1:
+        condition: service_healthy
+      hospital2:
+        condition: service_healthy
 
 volumes:
   postgres_private:
   postgres_hospital1:
   postgres_hospital2:
+  postgres_vocab:

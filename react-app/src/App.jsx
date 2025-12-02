@@ -12,6 +12,7 @@ import AboutUs from './pages/AboutUs';
 import Analytics from './pages/Analytics';
 import ManageUsers from './pages/ManageUsers';
 import UploadData from './pages/UploadData';
+import ApiGuide from './pages/Api';
 import ProtectedRoute from './components/ProtectedRoute';
 import './css/Main.css';
 
@@ -65,6 +66,7 @@ const App = () => {
               ) : <Navigate to="/signin" />
             } />
             <Route path="/upload-data" element={isSignedIn ? <UploadData /> : <Navigate to="/signin" />} />
+            <Route path="/api" element={isSignedIn ? <ApiGuide /> : <Navigate to="/signin" />} />
           </Routes>
         </main>
         <Footer />

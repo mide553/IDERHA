@@ -1,0 +1,35 @@
+# Environment variables
+.env
+backend/src/main/resources/application.properties
+
+# IDE files  
+/.idea
+/.vscode
+
+# Dependencies
+node_modules/
+target/
+*.jar
+!wrapper/*.jar
+
+# Logs
+*.log
+logs/
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# Database files
+*.db
+*.sqlite
+
+# Docker volume mount points
+db_setup/clinical/16_persons.sql
+db_setup/clinical/17_conditions.sql
+db_setup/clinical/18_drugs.sql
+db_setup/clinical/19_visits.sql
+db_setup/clinical/20_observations.sql
+#OHDSI Folder - Official GitHub Repository of OMOP CDM
+OHDSI

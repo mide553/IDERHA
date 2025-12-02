@@ -1,0 +1,479 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+/* API Documentation Styles */
+.api-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.api-main h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.content {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Container Styles */
+.api-management-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 2rem auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.api-documentation-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.tabs button {
+    padding: 12px 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tabs button:hover {
+    background-color: #f8f9fa;
+}
+
+.tabs button.active {
+    border-bottom-color: #3498db;
+    color: #3498db;
+    font-weight: 600;
+}
+
+/* Documentation Content */
+.quick-start {
+    margin-bottom: 30px;
+}
+
+.step {
+    margin-bottom: 25px;
+}
+
+.step p {
+    font-size: 16px;
+    margin: 0.5rem 0;
+}
+
+.example-response {
+    margin: 15px 0;
+}
+
+.important-notes {
+    margin-bottom: 30px;
+}
+
+.endpoints-summary {
+    margin-bottom: 30px;
+}
+
+.endpoints-summary p {
+    font-size: 16px;
+    margin: 0.3rem 0;
+}
+
+.support-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.overview {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.overview h2 {
+    color: #2c3e50;
+    margin-top: 0;
+}
+
+.authentication {
+    margin-bottom: 30px;
+}
+
+.authentication h3 {
+    color: #34495e;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 5px;
+}
+
+.authentication code {
+    background: #e8f4fd;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Consolas', monospace;
+}
+
+/* Endpoints */
+.endpoints {
+    margin-bottom: 30px;
+}
+
+.endpoints h3 {
+    color: #34495e;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 5px;
+}
+
+.endpoint {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.endpoint h4 {
+    background: #f8f9fa;
+    margin: 0;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.method {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    min-width: 60px;
+    text-align: center;
+}
+
+.method.post {
+    background: #28a745;
+    color: white;
+}
+
+.method.get {
+    background: #007bff;
+    color: white;
+}
+
+.endpoint-details {
+    padding: 20px;
+}
+
+.endpoint-details h5 {
+    color: #495057;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.endpoint-details ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.endpoint-details li {
+    margin-bottom: 5px;
+}
+
+.code-block {
+    background: #f3f3f3;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 15px;
+    overflow-x: auto;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 10px 0;
+}
+
+/* API Management */
+/* API Management */
+.api-management-section {
+    max-width: 1400px;
+    margin: 0 auto 30px auto;
+    text-align: center;
+}
+
+.api-management-section h2 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.api-management-section h3 {
+    color: #34495e;
+    margin-bottom: 20px;
+}
+
+.api-management-content {
+    max-width: 1000px;
+}
+
+.generate-key-section {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.generate-key-section h3 {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.api-key-form {
+    display: grid;
+    gap: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #495057;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.generate-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    justify-self: start;
+}
+
+.generate-button:hover:not(:disabled) {
+    background: #218838;
+}
+
+.generate-button:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Generated Key Result */
+.generated-key-result {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.generated-key-result h4 {
+    color: #155724;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.key-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.key-value code {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 13px;
+    flex: 1;
+    word-break: break-all;
+}
+
+.copy-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.copy-button:hover {
+    background: #0056b3;
+}
+
+.warning {
+    color: #856404;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* API Keys Table */
+.existing-keys-section {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.existing-keys-section h3 {
+    color: #2c3e50;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.api-keys-table {
+    overflow-x: auto;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.api-keys-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.api-keys-table th,
+.api-keys-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.api-keys-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.api-keys-table tr:hover {
+    background: #f8f9fa;
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status.active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status.inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.deactivate-button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.deactivate-button:hover {
+    background: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .api-main {
+        padding: 15px;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tabs button {
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+        border-radius: 0;
+    }
+
+    .tabs button.active {
+        border-bottom: 1px solid #e0e0e0;
+        background: #e8f4fd;
+    }
+
+    .endpoint h4 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .api-keys-table {
+        font-size: 14px;
+    }
+
+    .api-keys-table th,
+    .api-keys-table td {
+        padding: 8px 10px;
+    }
+}

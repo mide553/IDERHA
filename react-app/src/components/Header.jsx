@@ -35,6 +35,7 @@ const Header = ({ isSignedIn, setIsSignedIn, userRole }) => {
                         <Link to="/analytics">Analytics</Link>
                         {(userRole === 'admin' || userRole === 'hospital') && <Link to="/manage-users">Manage Users</Link>}
                         {(userRole === 'hospital' || userRole === 'admin') && <Link to="/upload-data">Upload Data</Link>}
+                        {(userRole === 'hospital' || userRole === 'admin') && <Link to="/api">API Guide</Link>}
                         <button onClick={handleSignOut} className="nav-button">Sign Out</button>
                     </>
                 )}
