@@ -11,8 +11,8 @@ A healthcare data management platform for hospitals to store, analyze, and share
 
 ## Tech Stack
 
-- **Frontend**: React with Vite
-- **Backend**: Spring Boot (Java)
+- **Frontend**: React with Vite (Port 3000)
+- **Backend**: Spring Boot (Java) (Port 8080)
 - **Database**: PostgreSQL
 - **Deployment**: Docker Compose
 
@@ -45,38 +45,70 @@ ADMIN_FIRSTNAME=Admin
 ADMIN_LASTNAME=Admin
 ```
 
-3. **Start everything**
-```bash
-# Start databases
-docker-compose up -d
+2. **Create essential application.properties file (see backend/src/main/resources/application.properties.example )** 
+```application.properties
+server.port=8080
 
-# Wait until databases are populated with patient data
-# Check with command:
-docker logs eHealth_Insights_postgres_hospital1 --tail 3
+# Private Database (User-related data)
+private.datasource.url=jdbc:postgresql://localhost:5432/private_eHealth_Insights
+private.datasource.username=postgres
+private.datasource.password=password
+private.datasource.driver-class-name=org.postgresql.Driver
 
-# After verifying that databases are populated and ready, run FDW setup:
-.\setup-fdw.ps1
+# Hospital 1 Database
+hospital1.datasource.url=jdbc:postgresql://localhost:5433/hospital1_eHealth_Insights
+hospital1.datasource.username=postgres
+hospital1.datasource.password=password
+hospital1.datasource.driver-class-name=org.postgresql.Driver
 
-# Start backend (in new terminal)
-cd backend
-# Check if Maven is installed
-mvn -v
-mvn clean install
-mvn spring-boot:run
-
-# Start frontend (in another terminal)
-cd react-app
-# Check Node.js version
-node -v
-npm -v
-npm install
-npm run dev
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=none
 ```
 
-4. **Open the app**
-- Frontend: http://localhost:3000
-- Login with admin credentials
-- In order to use the Analytics page - Wait 5-10 Minutes for databases to be populated with patient data
+4. **Start everything**
+
+**Option A: Using the helper script (Recommended)**
+- **Windows**:
+  ```powershell
+  ./start-app.ps1
+  ```
+- **Linux/Mac**:
+  ```bash
+  chmod +x start-app.sh
+  ./start-app.sh
+  ```
+*(This automatically starts the app, waits for the database setup to finish, and cleans up the setup container.)*
+
+**Option B: Manual (Standard Docker way)**
+```bash
+# Build and start all services
+docker-compose up -d --build
+
+# Watch the setup progress
+# Vocab container - OMOP Concepts database
+docker logs -f eHealth_Insights_postgres_vocab
+
+# Backend container - runs backend 
+docker logs -f eHealth_Insights_backend
+
+# Frontend container - runs react-app
+docker logs -f eHealth_Insights_frontend
+
+# Hospital1&2 containers - hospital patient_data databases
+docker logs -f eHealth_Insights_postgres_hospital1
+docker logs -f eHealth_Insights_postgres_hospital2
+
+# Private container - private database
+docker logs -f eHealth_Insights_postgres_private
+
+# Setup container - waits for everything then runs FDW setup
+docker logs -f eHealth_Insights_setup
+```
+
+5. **Open the app**
+- The setup is complete when you see "SETUP COMPLETE" in the logs above.
+- Website: http://localhost:3000
+- Login with admin/hospital/researcher credentials
 
 ## Troubleshooting
 

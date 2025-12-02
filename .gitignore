@@ -1,5 +1,6 @@
 # Environment variables
 .env
+backend/src/main/resources/application.properties
 
 # IDE files  
 /.idea
