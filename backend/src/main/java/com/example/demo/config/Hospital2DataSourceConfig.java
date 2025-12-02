@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -12,15 +13,15 @@ import javax.sql.DataSource;
 @Configuration
 public class Hospital2DataSourceConfig {
 
+    @Bean
+    @ConfigurationProperties("hospital2.datasource")
+    public DataSourceProperties hospital2DataSourceProperties() {
+        return new DataSourceProperties();
+    }
+
     @Bean(name = "hospital2DataSource")
-    @ConfigurationProperties(prefix = "hospital2.datasource")
     public DataSource hospital2DataSource() {
-        return DataSourceBuilder.create()
-                .url("jdbc:postgresql://localhost:5434/hospital2_eHealth_Insights")
-                .username("postgres")
-                .password("password")
-                .driverClassName("org.postgresql.Driver")
-                .build();
+        return hospital2DataSourceProperties().initializeDataSourceBuilder().build();
     }
 
     @Bean(name = "hospital2JdbcTemplate")

@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -22,16 +23,17 @@ import jakarta.persistence.EntityManagerFactory;
 @EnableJpaRepositories(entityManagerFactoryRef = "privateEntityManagerFactory", transactionManagerRef = "privateTransactionManager", basePackages = {
         "com.example.demo.repository" })
 public class PrivateDataSourceConfig {
+
+    @Bean
+    @ConfigurationProperties("private.datasource")
+    public DataSourceProperties privateDataSourceProperties() {
+        return new DataSourceProperties();
+    }
+
     @Primary
     @Bean(name = "privateDataSource")
-    @ConfigurationProperties(prefix = "private.datasource")
     public DataSource privateDataSource() {
-        return DataSourceBuilder.create()
-                .url("jdbc:postgresql://localhost:5432/private_eHealth_Insights")
-                .username("postgres")
-                .password("password")
-                .driverClassName("org.postgresql.Driver")
-                .build();
+        return privateDataSourceProperties().initializeDataSourceBuilder().build();
     }
 
     @Primary

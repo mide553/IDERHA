@@ -12,6 +12,11 @@ services:
     volumes:
       - postgres_vocab:/var/lib/postgresql/data
       - ./db_setup/vocab/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   private:
     image: postgres:15
@@ -32,6 +37,11 @@ services:
       - hospital1
       - hospital2
       - vocab
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   hospital1:
     image: postgres:15
@@ -53,6 +63,11 @@ services:
       - ./patient_data/hospital1/5_observations.sql:/docker-entrypoint-initdb.d/20_observations.sql
     depends_on:
       - vocab
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   hospital2:
     image: postgres:15
@@ -74,6 +89,57 @@ services:
       - ./patient_data/hospital2/5_observations.sql:/docker-entrypoint-initdb.d/20_observations.sql
     depends_on:
       - vocab
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: eHealth_Insights_backend
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    tmpfs:
+      - /tmp
+    depends_on:
+      private:
+        condition: service_healthy
+      hospital1:
+        condition: service_healthy
+      hospital2:
+        condition: service_healthy
+
+  frontend:
+    build: ./react-app
+    container_name: eHealth_Insights_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  setup:
+    image: postgres:15
+    container_name: eHealth_Insights_setup
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - ./db_setup/setup-fdw.sh:/setup-fdw.sh
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: ["bash", "/setup-fdw.sh"]
+    depends_on:
+      vocab:
+        condition: service_healthy
+      hospital1:
+        condition: service_healthy
+      hospital2:
+        condition: service_healthy
 
 volumes:
   postgres_private:
