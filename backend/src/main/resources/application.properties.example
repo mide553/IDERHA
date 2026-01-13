@@ -1,22 +1,32 @@
 server.port=8080
 
 # Private Database (User-related data)
-private.datasource.url=jdbc:postgresql://localhost:5432/private_eHealth_Insights    //can change
-private.datasource.username=postgres    //can change
-private.datasource.password=password    //can change
+# Uses PRIVATE_DB_URL env var if set, otherwise defaults to Docker service name
+private.datasource.url=${PRIVATE_DB_URL:jdbc:postgresql://private:5432/private_eHealth_Insights}
+private.datasource.username=${POSTGRES_USER:postgres}
+private.datasource.password=${POSTGRES_PASSWORD:password}
 private.datasource.driver-class-name=org.postgresql.Driver
 
 # Hospital 1 Database
-hospital1.datasource.url=jdbc:postgresql://localhost:5433/hospital1_eHealth_Insights    //can change
-hospital1.datasource.username=postgres  //can change
-hospital1.datasource.password=password  //can change
+# Uses HOSPITAL1_DB_URL env var if set, otherwise defaults to Docker service name
+hospital1.datasource.url=${HOSPITAL1_DB_URL:jdbc:postgresql://hospital1:5432/hospital1_eHealth_Insights}
+hospital1.datasource.username=${POSTGRES_USER:postgres}
+hospital1.datasource.password=${POSTGRES_PASSWORD:password}
 hospital1.datasource.driver-class-name=org.postgresql.Driver
 
 # Hospital 2 Database
-hospital2.datasource.url=jdbc:postgresql://localhost:5434/hospital2_eHealth_Insights    //can change
-hospital2.datasource.username=postgres  //can change
-hospital2.datasource.password=password  //can change
+# Uses HOSPITAL2_DB_URL env var if set, otherwise defaults to Docker service name
+hospital2.datasource.url=${HOSPITAL2_DB_URL:jdbc:postgresql://hospital2:5432/hospital2_eHealth_Insights}
+hospital2.datasource.username=${POSTGRES_USER:postgres}
+hospital2.datasource.password=${POSTGRES_PASSWORD:password}
 hospital2.datasource.driver-class-name=org.postgresql.Driver
+
+# Hospital 3 Database
+# Uses HOSPITAL3_DB_URL env var if set, otherwise defaults to Docker service name
+hospital3.datasource.url=${HOSPITAL3_DB_URL:jdbc:postgresql://hospital3:5432/hospital3_eHealth_Insights}
+hospital3.datasource.username=${POSTGRES_USER:postgres}
+hospital3.datasource.password=${POSTGRES_PASSWORD:password}
+hospital3.datasource.driver-class-name=org.postgresql.Driver
 
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 spring.jpa.hibernate.ddl-auto=none

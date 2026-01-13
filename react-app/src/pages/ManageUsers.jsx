@@ -9,11 +9,39 @@ const ManageUsers = () => {
     const [error, setError] = useState(null); const [currentUserRole, setCurrentUserRole] = useState(null);
     const [currentUserEmail, setCurrentUserEmail] = useState(null);
     const [roleFilter, setRoleFilter] = useState('all');
+    const [availableDatabases, setAvailableDatabases] = useState([]);
 
     useEffect(() => {
         fetchUsers();
         getCurrentUserRole();
-    }, []); const getCurrentUserRole = async () => {
+        fetchAvailableDatabases();
+    }, []);
+
+    const fetchAvailableDatabases = async () => {
+        try {
+            const response = await fetch('/api/databases', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.databases) {
+                    setAvailableDatabases(data.databases);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch databases:', err);
+        }
+    };
+
+    const getDatabaseDisplayName = (dbName) => {
+        const match = dbName.match(/hospital(\d+)/);
+        if (match) {
+            const hospitalNum = match[1];
+            const port = 5432 + parseInt(hospitalNum);
+            return `Hospital ${hospitalNum} (${port})`;
+        }
+        return dbName;
+    }; const getCurrentUserRole = async () => {
         try {
             const response = await fetch('/api/users/check-session', {
                 credentials: 'include',
@@ -140,8 +168,11 @@ const ManageUsers = () => {
                         onChange={(e) => setNewUser({ ...newUser, assignedDatabase: e.target.value })}
                     >
                         <option value="">Select Database</option>
-                        <option value="hospital1">Hospital 1 (5433)</option>
-                        <option value="hospital2">Hospital 2 (5434)</option>
+                        {availableDatabases.map(db => (
+                            <option key={db} value={db}>
+                                {getDatabaseDisplayName(db)}
+                            </option>
+                        ))}
                     </select>
                 )}
                 <select
@@ -211,8 +242,11 @@ const ManageUsers = () => {
                                             onChange={(e) => setEditingUser({ ...editingUser, assignedDatabase: e.target.value })}
                                         >
                                             <option value="">Select Database</option>
-                                            <option value="hospital1">Hospital 1 (5433)</option>
-                                            <option value="hospital2">Hospital 2 (5434)</option>
+                                            {availableDatabases.map(db => (
+                                                <option key={db} value={db}>
+                                                    {getDatabaseDisplayName(db)}
+                                                </option>
+                                            ))}
                                         </select>
                                     </>
                                 )}

@@ -4,6 +4,13 @@
 # Wait a bit for PostgreSQL to be fully ready
 sleep 5
 
+# Function to BCrypt hash a password
+hash_password() {
+    local password=$1
+    # Use Python to generate BCrypt hash (compatible with Spring Security BCrypt)
+    python3 -c "import bcrypt; print(bcrypt.hashpw('$password'.encode('utf-8'), bcrypt.gensalt(rounds=10)).decode('utf-8'))"
+}
+
 # Build SQL dynamically by checking for user patterns
 SQL_VALUES=""
 COUNTER=0
@@ -22,6 +29,8 @@ add_user() {
     local lastname="${!lastname_var}"
     
     if [ ! -z "$email" ] && [ ! -z "$password" ] && [ ! -z "$firstname" ] && [ ! -z "$lastname" ]; then
+        # Hash the password using BCrypt
+        local hashed_password=$(hash_password "$password")
         # Determine role and database assignment
         local role="researcher"
         local created_by="${ADMIN_EMAIL}"
@@ -40,7 +49,7 @@ add_user() {
             SQL_VALUES+=", "
         fi
         
-        SQL_VALUES+="('$email', '$password', '$firstname', '$lastname', '$role', '$created_by', $assigned_db)"
+        SQL_VALUES+="('$email', '$hashed_password', '$firstname', '$lastname', '$role', '$created_by', $assigned_db)"
         COUNTER=$((COUNTER + 1))
         echo "Added user: $email ($role)"
     fi

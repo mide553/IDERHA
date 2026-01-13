@@ -21,7 +21,9 @@ services:
       retries: 5
 
   private:
-    image: postgres:15
+    build:
+      context: ./db_setup/private
+      dockerfile: Dockerfile
     container_name: eHealth_Insights_postgres_private
     restart: always
     mem_limit: 512m
@@ -111,10 +113,6 @@ services:
       - "8080:8080"
     env_file:
       - .env
-    environment:
-      - PRIVATE_DB_URL=jdbc:postgresql://private:5432/private_eHealth_Insights
-      - HOSPITAL1_DB_URL=jdbc:postgresql://hospital1:5432/hospital1_eHealth_Insights
-      - HOSPITAL2_DB_URL=jdbc:postgresql://hospital2:5432/hospital2_eHealth_Insights
     mem_limit: 1024m
     tmpfs:
       - /tmp
@@ -142,6 +140,7 @@ services:
       - /var/lib/postgresql/data
     volumes:
       - ./db_setup/setup-fdw.sh:/setup-fdw.sh
+      - ./docker-compose.yml:/docker-compose.yml:ro
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

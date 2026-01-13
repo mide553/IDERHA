@@ -85,4 +85,21 @@ public class DatabaseController {
                     "views", List.of()));
         }
     }
+
+    /**
+     * Get list of all available hospital databases
+     */
+    @GetMapping("/databases")
+    public ResponseEntity<?> getAvailableDatabases() {
+        try {
+            List<String> databases = databaseService.getAvailableDatabases();
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "databases", databases));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    Map.of("error", "Failed to get databases",
+                            "message", e.getMessage()));
+        }
+    }
 }

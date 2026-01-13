@@ -13,6 +13,7 @@ const ApiDocumentation = () => {
         description: ''
     });
     const [generating, setGenerating] = useState(false);
+    const [availableDatabases, setAvailableDatabases] = useState([]);
 
     // Helper function to highlight customizable parts in code
     const highlightCode = (code) => {
@@ -24,7 +25,27 @@ const ApiDocumentation = () => {
 
     useEffect(() => {
         getCurrentUser();
+        fetchAvailableDatabases();
     }, []);
+
+    const fetchAvailableDatabases = async () => {
+        try {
+            const response = await fetch('/api/databases', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.databases) {
+                    setAvailableDatabases(data.databases);
+                    if (data.databases.length > 0) {
+                        setKeyForm(prev => ({ ...prev, assignedDatabase: data.databases[0] }));
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch databases:', err);
+        }
+    };
 
     useEffect(() => {
         if (currentUser && currentUser.role === 'admin') {
@@ -182,8 +203,11 @@ const ApiDocumentation = () => {
                                                     value={keyForm.assignedDatabase}
                                                     onChange={(e) => setKeyForm({ ...keyForm, assignedDatabase: e.target.value })}
                                                 >
-                                                    <option value="hospital1">Hospital 1</option>
-                                                    <option value="hospital2">Hospital 2</option>
+                                                    {availableDatabases.map(db => (
+                                                        <option key={db} value={db}>
+                                                            {db.charAt(0).toUpperCase() + db.slice(1).replace(/\d+/, ' $&')}
+                                                        </option>
+                                                    ))}
                                                 </select>
                                             </div>
                                             <div className="form-group">
