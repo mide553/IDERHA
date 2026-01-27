@@ -31,7 +31,7 @@ public class UserController {
         User user = userService.findByEmail(email);
 
         Map<String, String> response = new HashMap<>();
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && userService.validatePassword(password, user.getPassword())) {
             session.setAttribute("user", user);
             response.put("status", "success");
             response.put("email", user.getEmail());
@@ -126,6 +126,11 @@ public class UserController {
         }
 
         newUser.setCreatedBy(currentUser.getEmail());
+        
+        // Hash the password before saving
+        if (newUser.getPassword() != null && !newUser.getPassword().trim().isEmpty()) {
+            newUser.setPassword(userService.encodePassword(newUser.getPassword()));
+        }
 
         try {
             User savedUser = userRepository.save(newUser);
@@ -185,7 +190,8 @@ public class UserController {
         existingUser.setAssignedDatabase(updatedUser.getAssignedDatabase());
 
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().trim().isEmpty()) {
-            existingUser.setPassword(updatedUser.getPassword());
+            // Hash the new password before saving
+            existingUser.setPassword(userService.encodePassword(updatedUser.getPassword()));
         }
 
         try {

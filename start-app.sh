@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Start the application in detached mode
+# Start the application in detached mode (and rebuild if code changed)
 echo "Starting application..."
-docker-compose up -d
+docker-compose up -d --build
 
 # Wait for the setup container to finish its job
 echo "Waiting for database setup to complete..."

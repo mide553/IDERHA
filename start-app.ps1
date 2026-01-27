@@ -1,5 +1,5 @@
-# Start the application in detached mode
-docker-compose up -d
+# Start the application in detached mode (and rebuild if code changed)
+docker-compose up -d --build
 
 # Wait for the setup container to finish its job
 Write-Host "Waiting for database setup to complete..." -ForegroundColor Cyan

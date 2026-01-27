@@ -11,14 +11,35 @@ const UploadData = () => {
     const [error, setError] = useState(null);
     const [sqlContent, setSqlContent] = useState('');
     const [selectedDatabase, setSelectedDatabase] = useState('hospital1');
+    const [availableDatabases, setAvailableDatabases] = useState([]);
 
     useEffect(() => {
         getCurrentUser();
+        fetchAvailableDatabases();
     }, []);
+
+    const fetchAvailableDatabases = async () => {
+        try {
+            const response = await fetch('/api/databases', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.databases) {
+                    setAvailableDatabases(data.databases);
+                    if (data.databases.length > 0 && !selectedDatabase) {
+                        setSelectedDatabase(data.databases[0]);
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch databases:', err);
+        }
+    };
 
     const getCurrentUser = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/check-session', {
+            const response = await fetch('/api/users/check-session', {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -33,11 +54,14 @@ const UploadData = () => {
     };
 
     const getDatabaseDisplayName = (dbName) => {
-        switch (dbName) {
-            case 'hospital1': return 'Hospital 1 (Port 5433)';
-            case 'hospital2': return 'Hospital 2 (Port 5434)';
-            default: return 'Unknown Database';
+        // Extract number from hospital name (e.g., "hospital1" -> "1")
+        const match = dbName.match(/hospital(\d+)/);
+        if (match) {
+            const hospitalNum = match[1];
+            const port = 5432 + parseInt(hospitalNum); // 5433, 5434, etc.
+            return `Hospital ${hospitalNum} (Port ${port})`;
         }
+        return dbName.charAt(0).toUpperCase() + dbName.slice(1);
     };
 
     const handleFileSelect = (event) => {
@@ -87,7 +111,7 @@ const UploadData = () => {
 
             formData.append('database', targetDatabase);
 
-            const response = await fetch('http://localhost:8080/api/upload/sql', {
+            const response = await fetch('/api/upload/sql', {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',
@@ -152,8 +176,11 @@ const UploadData = () => {
                                             value={selectedDatabase}
                                             onChange={(e) => setSelectedDatabase(e.target.value)}
                                         >
-                                            <option value="hospital1">Hospital 1 (Port 5433)</option>
-                                            <option value="hospital2">Hospital 2 (Port 5434)</option>
+                                            {availableDatabases.map(db => (
+                                                <option key={db} value={db}>
+                                                    {getDatabaseDisplayName(db)}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                 )}

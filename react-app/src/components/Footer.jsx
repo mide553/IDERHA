@@ -10,6 +10,7 @@ const Footer = () => {
                     <Link to="/privacy-policy">Privacy Policy</Link>
                     <Link to="/terms-of-service">Terms of Service</Link>
                     <Link to="/about-us">About Us</Link>
+                    <Link to="/help">Help</Link>
                 </div>
                 <div className="footer-contact">
                     <p>Email: <a href="mailto:support@innoproject.com">support@innoproject.com</a></p>

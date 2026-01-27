@@ -25,7 +25,7 @@ public class ApiKey {
     private String assignedDatabase;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive = true;
+    private boolean isActive = false;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

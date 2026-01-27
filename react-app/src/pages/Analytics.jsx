@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '../css/Analytics.css';
 import { queries, executeQuery, checkUnifiedViews } from '../services/queryService';
+import { exportChartToPDF, exportCompleteDashboardToPDF } from '../services/exportService';
 import {
     BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
     AreaChart, Area, ScatterChart, Scatter, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ComposedChart,
@@ -30,6 +31,10 @@ const Analytics = () => {
     const [queryHistory, setQueryHistory] = useState([]);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [selectedQuery, setSelectedQuery] = useState(null);
+    const [availableDatabases, setAvailableDatabases] = useState([]);
+    const [exportingPDF, setExportingPDF] = useState(false);
+    const [exportingCompleteDashboard, setExportingCompleteDashboard] = useState(false);
+    const chartContainerRef = useRef(null);
 
     // Load saved queries and history from localStorage
     useEffect(() => {
@@ -45,7 +50,74 @@ const Analytics = () => {
                 console.warn('FDW not available. Run setup-fdw.ps1 to enable cross-hospital queries.');
             }
         });
+
+        // Fetch available databases
+        fetchAvailableDatabases();
     }, []);
+
+    const fetchAvailableDatabases = async () => {
+        try {
+            const response = await fetch('/api/databases', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.databases) {
+                    setAvailableDatabases(data.databases);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch databases:', err);
+        }
+    };
+
+    // Export current dashboard to PDF
+    const exportToPDF = async () => {
+        if (!queryResult || queryResult.length === 0) {
+            alert('No data to export. Please run a query first.');
+            return;
+        }
+
+        setExportingPDF(true);
+        try {
+            await exportChartToPDF({
+                queryResult,
+                currentQueryName,
+                selectedDatabase,
+                filters,
+                selectedQuery,
+                chartContainerRef: chartContainerRef.current
+            });
+            alert('PDF exported successfully!');
+        } catch (err) {
+            console.error('PDF export failed:', err);
+            alert(err.message || 'Failed to export PDF. Please try again.');
+        } finally {
+            setExportingPDF(false);
+        }
+    };
+
+    // Export complete dashboard with multiple charts
+    const exportCompleteDashboard = async () => {
+        setExportingCompleteDashboard(true);
+        try {
+            await exportCompleteDashboardToPDF({
+                queries,
+                executeQuery,
+                isQueryFilterable,
+                applyFiltersToSql,
+                getChartComponent,
+                selectedDatabase,
+                filters
+            });
+            alert('Complete dashboard exported successfully!');
+        } catch (err) {
+            console.error('Complete dashboard export failed:', err);
+            alert('Failed to export complete dashboard. Please try again.');
+        } finally {
+            setExportingCompleteDashboard(false);
+        }
+    };
 
     // Save query to history
     const addToHistory = (queryObj) => {
@@ -786,8 +858,11 @@ const Analytics = () => {
                                 }}
                             >
                                 <option value="unified">All Hospitals (Unified FDW)</option>
-                                <option value="hospital1">Hospital 1 Only</option>
-                                <option value="hospital2">Hospital 2 Only</option>
+                                {availableDatabases.map(db => (
+                                    <option key={db} value={db}>
+                                        {db.charAt(0).toUpperCase() + db.slice(1).replace(/(\d+)/, ' $1')} Only
+                                    </option>
+                                ))}
                             </select>
                             {!fdwAvailable && selectedDatabase === 'unified' && (
                                 <small style={{ color: 'orange', display: 'block', marginTop: '5px' }}>
@@ -855,7 +930,7 @@ const Analytics = () => {
                                                 <span>{query.name}</span>
                                                 <div className="query-actions">
                                                     <button onClick={() => runQuery(query)}>▶</button>
-                                                    <button onClick={() => removeSavedQuery(query.id)}>🗑</button>
+                                                    <button onClick={() => removeSavedQuery(query.id)}>Delete</button>
                                                 </div>
                                             </div>
                                         ))
@@ -906,8 +981,56 @@ const Analytics = () => {
                     {queryResult ? (
                         <div className="query-result-container">
                             <div className="result-header">
-                                <h2>{currentQueryName}</h2>
-                                <p className="query-description">{selectedQuery?.description}</p>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
+                                    <div>
+                                        <h2>{currentQueryName}</h2>
+                                        <p className="query-description">{selectedQuery?.description}</p>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <button
+                                            onClick={exportToPDF}
+                                            disabled={exportingPDF || exportingCompleteDashboard}
+                                            className="export-pdf-button"
+                                            style={{
+                                                padding: '10px 20px',
+                                                backgroundColor: '#AFF4C6',
+                                                color: '#333',
+                                                border: 'none',
+                                                borderRadius: '5px',
+                                                cursor: (exportingPDF || exportingCompleteDashboard) ? 'not-allowed' : 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                opacity: (exportingPDF || exportingCompleteDashboard) ? 0.6 : 1
+                                            }}
+                                        >
+                                            {exportingPDF ? 'Exporting...' : 'Export Current Chart'}
+                                        </button>
+                                        <button
+                                            onClick={exportCompleteDashboard}
+                                            disabled={exportingPDF || exportingCompleteDashboard}
+                                            className="export-dashboard-button"
+                                            style={{
+                                                padding: '10px 20px',
+                                                backgroundColor: '#AFF4C6',
+                                                color: '#333',
+                                                border: 'none',
+                                                borderRadius: '5px',
+                                                cursor: (exportingPDF || exportingCompleteDashboard) ? 'not-allowed' : 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                opacity: (exportingPDF || exportingCompleteDashboard) ? 0.6 : 1
+                                            }}
+                                        >
+                                            {exportingCompleteDashboard ? 'Exporting Dashboard...' : 'Export Complete Dashboard'}
+                                        </button>
+                                    </div>
+                                </div>
                                 <div className="result-metadata">
                                     <span>Database: {selectedDatabase}</span>
                                     <span>Chart Type: {selectedQuery?.chartType || 'Auto'}</span>
@@ -948,7 +1071,7 @@ const Analytics = () => {
                                 </div>
                             </div>
 
-                            <div className="chart-container">
+                            <div className="chart-container" ref={chartContainerRef}>
                                 {getChartComponent(queryResult, selectedQuery)}
                             </div>
 

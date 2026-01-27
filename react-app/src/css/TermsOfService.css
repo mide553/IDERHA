@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+.terms-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.terms-page h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.terms-page .content {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.terms-page .content h2 {
+    font-size: 2rem;
+    margin: 2rem 0 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.terms-page .content h3 {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    color: #444;
+}
+
+.terms-page .content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: #444;
+}
+
+.terms-page .content ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 2rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.terms-page .content ul li {
+    font-size: 1.1rem;
+    padding: 1rem;
+    background-color: white;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #eee;
+}
+
+.terms-page .content ul li:nth-child(odd) {
+    background-color: #f8f8f8;
+}
+
+.terms-page .content ul li:hover {
+    background-color: #f0f0f0;
+    padding-left: 1.5rem;
+}
+
+.terms-page .content ul li:last-child {
+    border-bottom: none;
+}
+
+.terms-page .content section {
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .terms-page .content ul li {
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+}

@@ -7,6 +7,7 @@ A healthcare data management platform for hospitals to store, analyze, and share
 - Store patient data from multiple hospitals in separate databases
 - Provide secure login and user management
 - Offer data analytics and visualization
+- Export analytics charts and data to professional PDF reports
 - Support healthcare data standards (OMOP CDM)
 
 ## Tech Stack
@@ -14,6 +15,7 @@ A healthcare data management platform for hospitals to store, analyze, and share
 - **Frontend**: React with Vite (Port 3000)
 - **Backend**: Spring Boot (Java) (Port 8080)
 - **Database**: PostgreSQL
+- **Authentication**: BCrypt password hashing
 - **Deployment**: Docker Compose
 
 ## Quick Setup
@@ -74,8 +76,7 @@ spring.jpa.hibernate.ddl-auto=none
   ```
 - **Linux/Mac**:
   ```bash
-  chmod +x start-app.sh
-  ./start-app.sh
+  bash start-app.sh
   ```
 *(This automatically starts the app, waits for the database setup to finish, and cleans up the setup container.)*
 
@@ -110,6 +111,11 @@ docker logs -f eHealth_Insights_setup
 - Website: http://localhost:3000
 - Login with admin/hospital/researcher credentials
 
+
+## Adding new hospital database
+- **Easy Scaling**: - see `ADD_NEW_HOSPITAL.md`
+
+
 ## Troubleshooting
 
 **Missing OMOP Concept SQL files?**
@@ -132,11 +138,17 @@ npm install -g vite
 
 ## Testing
 
-Run frontend tests:
+**Frontend tests:**
 ```bash
 cd react-app
-npm install vitest jsdom --save-dev
 npm test
+```
+
+**Backend tests:**
+```bash
+cd backend
+./mvnw test        # Linux/Mac
+./mvnw.cmd test    # Windows
 ```
 
 ## Project Structure

@@ -13,6 +13,7 @@ const ApiDocumentation = () => {
         description: ''
     });
     const [generating, setGenerating] = useState(false);
+    const [availableDatabases, setAvailableDatabases] = useState([]);
 
     // Helper function to highlight customizable parts in code
     const highlightCode = (code) => {
@@ -24,7 +25,27 @@ const ApiDocumentation = () => {
 
     useEffect(() => {
         getCurrentUser();
+        fetchAvailableDatabases();
     }, []);
+
+    const fetchAvailableDatabases = async () => {
+        try {
+            const response = await fetch('/api/databases', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.databases) {
+                    setAvailableDatabases(data.databases);
+                    if (data.databases.length > 0) {
+                        setKeyForm(prev => ({ ...prev, assignedDatabase: data.databases[0] }));
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch databases:', err);
+        }
+    };
 
     useEffect(() => {
         if (currentUser && currentUser.role === 'admin') {
@@ -34,7 +55,7 @@ const ApiDocumentation = () => {
 
     const getCurrentUser = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/check-session', {
+            const response = await fetch('/api/users/check-session', {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -50,7 +71,7 @@ const ApiDocumentation = () => {
 
     const loadApiKeys = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/api-keys', {
+            const response = await fetch('/api/admin/api-keys', {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -81,7 +102,7 @@ const ApiDocumentation = () => {
                 hospitalId: autoHospitalId
             };
 
-            const response = await fetch('http://localhost:8080/api/admin/api-keys/generate', {
+            const response = await fetch('/api/admin/api-keys/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,7 +134,7 @@ const ApiDocumentation = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/api-keys/deactivate-by-id`, {
+            const response = await fetch(`/api/admin/api-keys/deactivate-by-id`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -182,8 +203,11 @@ const ApiDocumentation = () => {
                                                     value={keyForm.assignedDatabase}
                                                     onChange={(e) => setKeyForm({ ...keyForm, assignedDatabase: e.target.value })}
                                                 >
-                                                    <option value="hospital1">Hospital 1</option>
-                                                    <option value="hospital2">Hospital 2</option>
+                                                    {availableDatabases.map(db => (
+                                                        <option key={db} value={db}>
+                                                            {db.charAt(0).toUpperCase() + db.slice(1).replace(/\d+/, ' $&')}
+                                                        </option>
+                                                    ))}
                                                 </select>
                                             </div>
                                             <div className="form-group">
@@ -290,7 +314,7 @@ const ApiDocumentation = () => {
                                     <div className="example-response">
                                         <h4>Command Line (curl)</h4>
                                         <pre className="code-block" dangerouslySetInnerHTML={{
-                                            __html: highlightCode(`curl -X POST "http://localhost:8080/api/data/sql" \\
+                                            __html: highlightCode(`curl -X POST "http://<your-server-ip>:8080/api/data/sql" \\
   -H "X-API-Key: your-api-key" \\
   -H "Content-Type: text/plain" \\
   --data-binary @your-file.sql \\
@@ -308,7 +332,7 @@ $sqlContent = Get-Content "your-file.sql" -Raw
 $headers = @{ "X-API-Key" = $apiKey; "Content-Type" = "text/plain" }
 
 try {
-    $response = Invoke-RestMethod -Uri "http://localhost:8080/api/data/sql" -Method POST -Body $sqlContent -Headers $headers
+    $response = Invoke-RestMethod -Uri "http://<your-server-ip>:8080/api/data/sql" -Method POST -Body $sqlContent -Headers $headers
     
     # Success - show results
     Write-Host "Upload successful!" -ForegroundColor Green
@@ -353,7 +377,7 @@ try:
     }
 
     response = requests.post(
-        'http://localhost:8080/api/data/sql',
+        'http://<your-server-ip>:8080/api/data/sql',
         headers=headers,
         data=sql_content
     )

@@ -3,7 +3,7 @@
 // Helper function to execute queries with FDW support
 export const executeQuery = async (query, database = 'unified', useUnified = true) => {
     try {
-        const endpoint = 'http://localhost:8080/api/pg-query';
+        const endpoint = '/api/pg-query';
 
         // Build request body
         const requestBody = {
@@ -66,7 +66,7 @@ export const executeQuery = async (query, database = 'unified', useUnified = tru
 // Check available unified views
 export const checkUnifiedViews = async () => {
     try {
-        const response = await fetch('http://localhost:8080/api/unified-views', {
+        const response = await fetch('/api/unified-views', {
             credentials: 'include',
         });
 
@@ -497,7 +497,7 @@ export const queries = {
 // Helper function to check if user can access database
 export const canAccessDatabase = async (database) => {
     try {
-        const response = await fetch('http://localhost:8080/api/users/check-session', {
+        const response = await fetch('/api/users/check-session', {
             credentials: 'include',
         });
 
